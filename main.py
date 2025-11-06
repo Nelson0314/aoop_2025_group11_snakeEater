@@ -1,5 +1,6 @@
 import sys
 import pygame
+from game import GAME
 
 WIDTH = 1280
 HEIGHT = 720
@@ -14,12 +15,13 @@ def main():
 
     game = GAME(screen)
 
+    running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-            game.handle_event()
+            game.handleEvent()
     
         game.update()
         game.draw()
