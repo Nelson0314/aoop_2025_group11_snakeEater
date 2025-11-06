@@ -11,15 +11,41 @@ class Snake():
         self.color = color
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
         self.body = [self.head]
-        self.length = 1
+        self.length = 5
+        self.direction = pygame.Vector2(1, 0)
+        self.speed = 20
 
-    def draw(self, screen):
+    def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
-            pygame.draw.circle(screen, self.color, tile.center, 20, 0)
+            screenCenterX = tile.centerx - cameraX
+            screenCenterY = tile.centery - cameraY
+
+            pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), 20, 0)
 
     def move(self):
-        pass
-
+        head = self.body[0]
+        
+        newX = head.centerx + self.direction.x * self.speed
+        newY = head.centery + self.direction.y * self.speed
+        newHead = pygame.Rect(0, 0, TILE_SIZE, TILE_SIZE)
+        newHead.center = (newX, newY)
+        self.body.insert(0, newHead)
+        self.head = newHead
+        if len(self.body) > self.length:
+            self.body.pop()
 
 class playerSnake(Snake):
-    pass
+    def __init__(self, x, y, color):
+        super().__init__(x, y, color)
+
+    def updateDirectionByMouse(self):
+        mouseX, mouseY = pygame.mouse.get_pos()
+
+        dirX = mouseX - WIDTH / 2
+        dirY = mouseY - HEIGHT / 2
+        length = (dirX ** 2 + dirY ** 2) ** 0.5
+        if length > 0:
+            dirX = dirX / length
+            dirY = dirY / length
+
+        self.direction = pygame.Vector2(dirX, dirY)

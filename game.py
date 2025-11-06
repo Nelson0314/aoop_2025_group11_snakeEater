@@ -12,6 +12,8 @@ class GAME():
     def __init__(self, screen):
         self.screen = screen
         self.snakes = []
+        self.cameraX = 0
+        self.cameraY = 0
 
         self.setUp()
 
@@ -21,8 +23,6 @@ class GAME():
         player = playerSnake(xcentre, ycentre, WHITE)
         self.snakes.append(player)
 
-        
-
     def spawnFood(self):
         pass
 
@@ -30,15 +30,19 @@ class GAME():
         pass
 
     def update(self):
-        pass
+        for snake in self.snakes:
+            if isinstance(snake, playerSnake):
+                snake.updateDirectionByMouse()
+            
+            snake.move()
+
+        self.cameraX = self.snakes[0].head.centerx - SCREEN_WIDTH / 2
+        self.cameraY = self.snakes[0].head.centery - SCREEN_HEIGHT / 2
 
     def checkCollision(self):
         pass
 
     def draw(self):
-        self.screen.fill(BLACK)
-
+        self.screen.fill(BLACK)    
         for snake in self.snakes:
-            snake.draw(self.screen)
-
-    
+            snake.draw(self.screen, self.cameraX, self.cameraY)
