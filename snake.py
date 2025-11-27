@@ -11,7 +11,7 @@ class Snake():
         self.body = [self.head]
         self.length = 5
         self.direction = pygame.Vector2(1, 0)
-        self.speed = 1
+        self.speed = 40
 
     def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
@@ -26,21 +26,11 @@ class Snake():
         newX = head.centerx + self.direction.x * self.speed
         newY = head.centery + self.direction.y * self.speed
 
-        radius = TILE_SIZE // 2
-        
-        if newX < radius:
-            newX = radius
-        elif newX > MAP_WIDTH - radius:
-            newX = MAP_WIDTH - radius
-            
-        # 限制 Y 軸
-        if newY < radius:
-            newY = radius
-        elif newY > MAP_HEIGHT - radius:
-            newY = MAP_HEIGHT - radius
-
         newHead = pygame.Rect(0, 0, TILE_SIZE, TILE_SIZE)
-        newHead.center = (newX, newY)
+        if newX + TILE_SIZE // 2 < MAP_WIDTH:
+            self.head.center[0] = newX
+        if newY + TILE_SIZE // 2 < MAP_HEIGHT:
+            self.head.center[1] = newY
         self.body.insert(0, newHead)
         self.head = newHead
         if len(self.body) > self.length:
@@ -53,8 +43,8 @@ class playerSnake(Snake):
     def updateDirectionByMouse(self):
         mouseX, mouseY = pygame.mouse.get_pos()
 
-        dirX = mouseX - WIDTH / 2
-        dirY = mouseY - HEIGHT / 2
+        dirX = mouseX - SCREEN_WIDTH / 2
+        dirY = mouseY - SCREEN_HEIGHT / 2
         length = (dirX ** 2 + dirY ** 2) ** 0.5
         if length > 0:
             dirX = dirX / length
