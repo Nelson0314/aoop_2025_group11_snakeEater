@@ -82,7 +82,7 @@ class GAME():
                         
                     # 畫出這個網格矩形
                     pygame.draw.rect(self.screen, color, 
-                                     (tile_screen_x, tile_screen_y, TILE_SIZE, TILE_SIZE))
+                                     (tile_screen_x, tile_screen_y, GRID_SIZE, GRID_SIZE))
 
     def draw(self):
         self.screen.fill(BLACK)
