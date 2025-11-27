@@ -21,8 +21,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-            game.handleEvent()
-    
+        game.handleEvent()
         game.update()
         game.drawGrid()
         game.draw()

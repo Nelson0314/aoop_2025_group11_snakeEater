@@ -43,16 +43,6 @@ class GAME():
 
     def checkCollision(self):
         pass
-
-    def draw(self):
-        self.screen.fill(BLACK)    
-        for snake in self.snakes:
-            snake.draw(self.screen, self.cameraX, self.cameraY)
-        
-        playerHead = self.snakes[0].head
-        coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)})"
-        textSurface = self.font.render(coord, True, WHITE)
-        self.screen.blit(textSurface, (10, 10))
     
     def drawGrid(self):
         """
@@ -60,12 +50,12 @@ class GAME():
         """
         # 計算螢幕左上角在世界座標中的哪個「行 (row)」和「列 (col)」開始
         # 這裡多減 1 是為了確保邊緣不會有閃爍的空隙
-        start_col = int(self.cameraX // TILE_SIZE) - 1
-        start_row = int(self.cameraY // TILE_SIZE) - 1
+        start_col = int(self.cameraX // 500) - 1
+        start_row = int(self.cameraY // 500) - 1
 
         # 計算螢幕需要畫多少行和列才能填滿
-        cols_to_draw = SCREEN_WIDTH // TILE_SIZE + 4
-        rows_to_draw = SCREEN_HEIGHT // TILE_SIZE + 4
+        cols_to_draw = SCREEN_WIDTH // 500 + 4
+        rows_to_draw = SCREEN_HEIGHT // 500 + 4
 
         # 開始雙重迴圈繪製網格
         for row in range(start_row, start_row + rows_to_draw):
@@ -88,8 +78,18 @@ class GAME():
                     if (row + col) % 2 == 0:
                         color = (0, 0, 0)
                     else:
-                        color = (200, 200, 200)
+                        color = (100, 100, 100)
                         
                     # 畫出這個網格矩形
                     pygame.draw.rect(self.screen, color, 
                                      (tile_screen_x, tile_screen_y, TILE_SIZE, TILE_SIZE))
+
+    def draw(self):
+        self.screen.fill(BLACK)
+        for snake in self.snakes:
+            snake.draw(self.screen, self.cameraX, self.cameraY)
+        
+        playerHead = self.snakes[0].head
+        coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)})"
+        textSurface = self.font.render(coord, True, WHITE)
+        self.screen.blit(textSurface, (10, 10))
