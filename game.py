@@ -1,7 +1,7 @@
 import pygame
 from snake import Snake, playerSnake
 import random
-from settins import MAP_WIDTH, MAP_HEIGHT
+from settins import MAP_WIDTH, MAP_HEIGHT, GRID_SIZE
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -50,20 +50,20 @@ class GAME():
         """
         # 計算螢幕左上角在世界座標中的哪個「行 (row)」和「列 (col)」開始
         # 這裡多減 1 是為了確保邊緣不會有閃爍的空隙
-        start_col = int(self.cameraX // 500) - 1
-        start_row = int(self.cameraY // 500) - 1
+        start_col = int(self.cameraX // GRID_SIZE) - 1
+        start_row = int(self.cameraY // GRID_SIZE) - 1
 
         # 計算螢幕需要畫多少行和列才能填滿
-        cols_to_draw = SCREEN_WIDTH // 500 + 4
-        rows_to_draw = SCREEN_HEIGHT // 500 + 4
+        cols_to_draw = SCREEN_WIDTH // GRID_SIZE + 4
+        rows_to_draw = SCREEN_HEIGHT // GRID_SIZE + 4
 
         # 開始雙重迴圈繪製網格
         for row in range(start_row, start_row + rows_to_draw):
             for col in range(start_col, start_col + cols_to_draw):
                 
                 # 計算這個網格的世界座標 (左上角)
-                tile_world_x = col * TILE_SIZE
-                tile_world_y = row * TILE_SIZE
+                tile_world_x = col * GRID_SIZE
+                tile_world_y = row * GRID_SIZE
 
                 # 【關鍵】檢查這個網格是否在 10000x10000 的地圖範圍內
                 # 如果超出範圍，就不畫 (顯示底下的純黑色背景)
@@ -86,6 +86,7 @@ class GAME():
 
     def draw(self):
         self.screen.fill(BLACK)
+        self.drawGrid()
         for snake in self.snakes:
             snake.draw(self.screen, self.cameraX, self.cameraY)
         
