@@ -1,8 +1,6 @@
 import pygame
 import math
-TILE_SIZE = 20
-WIDTH = 1280
-HEIGHT = 720
+from settins import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Snake():
     def __init__(self, x, y, color):
