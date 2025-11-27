@@ -24,6 +24,7 @@ def main():
             game.handleEvent()
     
         game.update()
+        game.drawGrid()
         game.draw()
         pygame.display.flip()
         clock.tick(FPS)

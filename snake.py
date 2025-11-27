@@ -14,7 +14,7 @@ class Snake():
             self.body.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
         self.head = self.body[0]
         self.direction = pygame.Vector2(1, 0)
-        self.speed = 40
+        self.speed = 5
         self.spacing = 15
 
     def draw(self, screen, cameraX, cameraY):

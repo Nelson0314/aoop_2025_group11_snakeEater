@@ -1,6 +1,7 @@
 import pygame
 from snake import Snake, playerSnake
 import random
+from settins import MAP_WIDTH, MAP_HEIGHT
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -52,3 +53,43 @@ class GAME():
         coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)})"
         textSurface = self.font.render(coord, True, WHITE)
         self.screen.blit(textSurface, (10, 10))
+    
+    def drawGrid(self):
+        """
+        高效繪製網格背景。只繪製螢幕可見範圍內的網格。
+        """
+        # 計算螢幕左上角在世界座標中的哪個「行 (row)」和「列 (col)」開始
+        # 這裡多減 1 是為了確保邊緣不會有閃爍的空隙
+        start_col = int(self.cameraX // TILE_SIZE) - 1
+        start_row = int(self.cameraY // TILE_SIZE) - 1
+
+        # 計算螢幕需要畫多少行和列才能填滿
+        cols_to_draw = SCREEN_WIDTH // TILE_SIZE + 4
+        rows_to_draw = SCREEN_HEIGHT // TILE_SIZE + 4
+
+        # 開始雙重迴圈繪製網格
+        for row in range(start_row, start_row + rows_to_draw):
+            for col in range(start_col, start_col + cols_to_draw):
+                
+                # 計算這個網格的世界座標 (左上角)
+                tile_world_x = col * TILE_SIZE
+                tile_world_y = row * TILE_SIZE
+
+                # 【關鍵】檢查這個網格是否在 10000x10000 的地圖範圍內
+                # 如果超出範圍，就不畫 (顯示底下的純黑色背景)
+                if 0 <= tile_world_x < MAP_WIDTH and 0 <= tile_world_y < MAP_HEIGHT:
+                    
+                    # 計算螢幕座標
+                    tile_screen_x = tile_world_x - self.cameraX
+                    tile_screen_y = tile_world_y - self.cameraY
+                    
+                    # 決定顏色：黑灰相間的邏輯
+                    # 如果 行號+列號 是偶數用顏色1，奇數用顏色2
+                    if (row + col) % 2 == 0:
+                        color = (0, 0, 0)
+                    else:
+                        color = (200, 200, 200)
+                        
+                    # 畫出這個網格矩形
+                    pygame.draw.rect(self.screen, color, 
+                                     (tile_screen_x, tile_screen_y, TILE_SIZE, TILE_SIZE))
