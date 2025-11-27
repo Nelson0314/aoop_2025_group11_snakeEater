@@ -13,7 +13,7 @@ class Snake():
         self.body = [self.head]
         self.length = 5
         self.direction = pygame.Vector2(1, 0)
-        self.speed = 20
+        self.speed = 1
 
     def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
@@ -26,7 +26,7 @@ class Snake():
         head = self.body[0]
         
         newX = head.centerx + self.direction.x * self.speed
-        newY = head.centery - self.direction.y * self.speed
+        newY = head.centery + self.direction.y * self.speed
         newHead = pygame.Rect(0, 0, TILE_SIZE, TILE_SIZE)
         newHead.center = (newX, newY)
         self.body.insert(0, newHead)
