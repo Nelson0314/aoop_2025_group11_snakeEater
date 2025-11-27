@@ -3,6 +3,7 @@ from snake import Snake, playerSnake
 from food import Food
 import random
 from settings import *
+import math
 
 
 class GAME():
@@ -40,14 +41,36 @@ class GAME():
         for snake in self.snakes:
             if isinstance(snake, playerSnake):
                 snake.updateDirectionByMouse()
-            
+            self.checkCollision(snake)
             snake.move()
 
         self.cameraX = self.snakes[0].head.centerx - SCREEN_WIDTH / 2
         self.cameraY = self.snakes[0].head.centery - SCREEN_HEIGHT / 2
 
-    def checkCollision(self):
-        pass
+    def checkCollision(self, snake):
+        for i in range(len(self.food) - 1, -1, -1):
+            food = self.food[i]
+            
+            # 計算蛇頭跟食物的距離
+            dx = snake.head.centerx - food.x
+            dy = snake.head.centery - food.y
+            distance = math.sqrt(dx ** 2 + dy ** 2)
+            
+            # 判斷標準：距離 < (蛇頭半徑 + 食物半徑)
+            # TILE_SIZE//2 是蛇頭半徑
+            if distance < (TILE_SIZE // 2) + food.radius:
+                
+                # 1. 蛇變長
+                snake.grow(food.growth_value)
+                
+                # 2. 記錄這個食物的類型 (為了重生)
+                eatenType = food.type
+                
+                # 3. 移除這個食物
+                self.food.pop(i)
+                
+                # 4. 立刻補充一個同類型的食物，保持總量平衡
+                self.spawnFood(eatenType)
     
     def drawGrid(self):
         """
