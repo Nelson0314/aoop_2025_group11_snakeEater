@@ -7,7 +7,7 @@ class Snake():
         self.y = y
         self.color = color
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-        self.length = 20 
+        self.length = 10
         self.body = []
         for i in range(self.length):
             self.body.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
