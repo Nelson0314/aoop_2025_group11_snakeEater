@@ -26,7 +26,7 @@ class Snake():
         head = self.body[0]
         
         newX = head.centerx + self.direction.x * self.speed
-        newY = head.centery + self.direction.y * self.speed
+        newY = head.centery - self.direction.y * self.speed
         newHead = pygame.Rect(0, 0, TILE_SIZE, TILE_SIZE)
         newHead.center = (newX, newY)
         self.body.insert(0, newHead)

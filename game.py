@@ -14,6 +14,7 @@ class GAME():
         self.snakes = []
         self.cameraX = 0
         self.cameraY = 0
+        self.font = pygame.font.SysFont(None, 18)
 
         self.setUp()
 
@@ -46,3 +47,8 @@ class GAME():
         self.screen.fill(BLACK)    
         for snake in self.snakes:
             snake.draw(self.screen, self.cameraX, self.cameraY)
+        
+        playerHead = self.snakes[0].head
+        coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)})"
+        textSurface = self.font.render(coord, True, WHITE)
+        self.screen.blit(textSurface, (10, 10))
