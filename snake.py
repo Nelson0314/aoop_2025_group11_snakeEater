@@ -1,6 +1,6 @@
 import pygame
 import math
-from settins import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 class Snake():
     def __init__(self, x, y, color):
         self.x = x

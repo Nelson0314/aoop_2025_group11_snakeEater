@@ -1,7 +1,7 @@
 import pygame
 from snake import Snake, playerSnake
 import random
-from settins import MAP_WIDTH, MAP_HEIGHT, GRID_SIZE, TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH, BLACK, GRAY, WHITE
+from settings import MAP_WIDTH, MAP_HEIGHT, GRID_SIZE, TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH, BLACK, GRAY, WHITE
 
 
 class GAME():
