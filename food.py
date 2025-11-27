@@ -28,8 +28,4 @@ class Food:
         screen_x = self.x - cameraX
         screen_y = self.y - cameraY
         
-        # 簡單優化：如果食物在螢幕外，就不要畫 (節省效能)
-        # 這裡只做簡單判斷，假設螢幕外就不畫
-        # 實際上 Pygame 的 draw 已經很快了，不做判斷也沒關係
-        
         pygame.draw.circle(screen, self.color, (int(screen_x), int(screen_y)), self.radius)

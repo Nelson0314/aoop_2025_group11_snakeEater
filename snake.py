@@ -23,6 +23,9 @@ class Snake():
 
             pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), 10, 0)
 
+    def grow(self, amount=1): 
+        self.length += amount
+
     def move(self):
         head = self.body[0]
         

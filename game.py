@@ -1,13 +1,15 @@
 import pygame
 from snake import Snake, playerSnake
+from food import Food
 import random
-from settings import MAP_WIDTH, MAP_HEIGHT, GRID_SIZE, TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH, BLACK, GRAY, WHITE
+from settings import *
 
 
 class GAME():
     def __init__(self, screen):
         self.screen = screen
         self.snakes = []
+        self.food = []
         self.cameraX = 0
         self.cameraY = 0
         self.font = pygame.font.SysFont(None, 18)
@@ -20,8 +22,16 @@ class GAME():
         player = playerSnake(xcentre, ycentre, WHITE)
         self.snakes.append(player)
 
-    def spawnFood(self):
-        pass
+        for foodType, count in FOOD_COUNTS.items():
+            for _ in range(count):
+                self.spawnFood(foodType)
+
+    def spawnFood(self, foodType):
+        x = random.randint(20, MAP_WIDTH - 20)
+        y = random.randint(20, MAP_HEIGHT - 20)
+        
+        newFood = Food(x, y, foodType)
+        self.food.append(newFood)
 
     def handleEvent(self):
         pass
@@ -82,6 +92,8 @@ class GAME():
     def draw(self):
         self.screen.fill(BLACK)
         self.drawGrid()
+        for food in self.food:
+            food.draw(self.screen, self.cameraX, self.cameraY)
         for snake in self.snakes:
             snake.draw(self.screen, self.cameraX, self.cameraY)
         
