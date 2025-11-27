@@ -27,6 +27,20 @@ class Snake():
         
         newX = head.centerx + self.direction.x * self.speed
         newY = head.centery + self.direction.y * self.speed
+
+        radius = TILE_SIZE // 2
+        
+        if newX < radius:
+            newX = radius
+        elif newX > MAP_WIDTH - radius:
+            newX = MAP_WIDTH - radius
+            
+        # 限制 Y 軸
+        if newY < radius:
+            newY = radius
+        elif newY > MAP_HEIGHT - radius:
+            newY = MAP_HEIGHT - radius
+
         newHead = pygame.Rect(0, 0, TILE_SIZE, TILE_SIZE)
         newHead.center = (newX, newY)
         self.body.insert(0, newHead)
