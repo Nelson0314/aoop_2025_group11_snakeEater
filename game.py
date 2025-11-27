@@ -1,13 +1,8 @@
 import pygame
 from snake import Snake, playerSnake
 import random
-from settins import MAP_WIDTH, MAP_HEIGHT, GRID_SIZE
+from settins import MAP_WIDTH, MAP_HEIGHT, GRID_SIZE, TILE_SIZE, SCREEN_HEIGHT, SCREEN_WIDTH, BLACK, GRAY, WHITE
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-TILE_SIZE = 20
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
 
 class GAME():
     def __init__(self, screen):
@@ -76,9 +71,9 @@ class GAME():
                     # 決定顏色：黑灰相間的邏輯
                     # 如果 行號+列號 是偶數用顏色1，奇數用顏色2
                     if (row + col) % 2 == 0:
-                        color = (0, 0, 0)
+                        color = BLACK
                     else:
-                        color = (100, 100, 100)
+                        color = GRAY
                         
                     # 畫出這個網格矩形
                     pygame.draw.rect(self.screen, color, 
