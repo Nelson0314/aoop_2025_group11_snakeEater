@@ -8,13 +8,18 @@ class Snake():
         self.color = color
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
         self.length = 10
-        self.body = []
-        for i in range(self.length):
-            self.body.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
-        self.head = self.body[0]
         self.direction = pygame.Vector2(1, 0)
         self.speed = 5
         self.spacing = 15
+        
+        self.length = 10
+        self.body = []
+        for i in range(self.length):
+            # 初始時讓身體往左邊延伸，避免全部疊在一起
+            spawn_x = x 
+            spawn_y = y - i * self.spacing
+            self.body.append(pygame.Rect(spawn_x, spawn_y, TILE_SIZE, TILE_SIZE))
+        self.head = self.body[0]
 
     def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
