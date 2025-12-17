@@ -21,11 +21,15 @@ class Food:
         self.rect = pygame.Rect(x - self.radius, y - self.radius, 
                                 self.radius * 2, self.radius * 2)
 
-    def draw(self, screen, cameraX, cameraY):
+    def draw(self, screen, cameraX, cameraY, zoom):
         """
         畫出食物，當然也要減去鏡頭偏移量
         """
-        screenX = self.x - cameraX
-        screenY = self.y - cameraY
+        screenX = (self.x - cameraX) * zoom
+        screenY = (self.y - cameraY) * zoom
         
-        pygame.draw.circle(screen, self.color, (int(screenX), int(screenY)), self.radius)
+        radius = int(self.radius * zoom)
+        # 避免半徑太小
+        if radius < 1: radius = 1
+        
+        pygame.draw.circle(screen, self.color, (int(screenX), int(screenY)), radius)

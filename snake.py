@@ -32,12 +32,15 @@ class Snake():
         # body每一節的間距也要動態調整成 radius
         return self.radius
 
-    def draw(self, screen, cameraX, cameraY):
+    def draw(self, screen, cameraX, cameraY, zoom):
         for tile in self.body:
-            screenCenterX = tile.centerx - cameraX
-            screenCenterY = tile.centery - cameraY
+            screenCenterX = (tile.centerx - cameraX) * zoom
+            screenCenterY = (tile.centery - cameraY) * zoom
 
-            pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), self.radius, 0)
+            radius = int(self.radius * zoom)
+            if radius < 1: radius = 1
+
+            pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
 
     def grow(self, amount=1): 
         self.length += amount

@@ -125,20 +125,26 @@ class GAME():
                 # 4. 立刻補充一個同類型的食物，保持總量平衡
                 self.spawnFood(eatenType)
     
-    def drawGrid(self, surface):
+    def drawGrid(self, surface, zoom):
         """
         高效繪製網格背景。只繪製螢幕可見範圍內的網格。
         """
-        # 計算虛擬畫面需含蓋的範圍
-        virtualWidth = SCREEN_WIDTH / self.zoom
-        virtualHeight = SCREEN_HEIGHT / self.zoom
+        # 計算螢幕可見的世界範圍
+        # World Visible Width = SCREEN_WIDTH / zoom
+        worldVisibleWidth = SCREEN_WIDTH / zoom
+        worldVisibleHeight = SCREEN_HEIGHT / zoom
         
-        startCol = int(self.cameraX // GRID_SIZE) - 1
-        startRow = int(self.cameraY // GRID_SIZE) - 1
+        # 計算可見範圍的左上角 Grid 索引
+        startCol = int(self.cameraX // GRID_SIZE)
+        startRow = int(self.cameraY // GRID_SIZE)
 
-        colsToDraw = int(virtualWidth // GRID_SIZE) + 4
-        rowsToDraw = int(virtualHeight // GRID_SIZE) + 4
+        # 計算需要畫多少格
+        colsToDraw = int(worldVisibleWidth // GRID_SIZE) + 2
+        rowsToDraw = int(worldVisibleHeight // GRID_SIZE) + 2
 
+        # 限制範圍，不要畫到負數索引
+        # 其實不用限制，因為 world 座標檢查會處理
+        
         # 開始雙重迴圈繪製網格
         for row in range(startRow, startRow + rowsToDraw):
             for col in range(startCol, startCol + colsToDraw):
@@ -148,23 +154,28 @@ class GAME():
                 tileWorldY = row * GRID_SIZE
 
                 # 【關鍵】檢查這個網格是否在 10000x10000 的地圖範圍內
-                # 如果超出範圍，就不畫 (顯示底下的純黑色背景)
                 if 0 <= tileWorldX < MAP_WIDTH and 0 <= tileWorldY < MAP_HEIGHT:
                     
-                    # 計算螢幕座標
-                    tileScreenX = tileWorldX - self.cameraX
-                    tileScreenY = tileWorldY - self.cameraY
+                    # 計算螢幕座標 (Coordinate Transformation)
+                    # ScreenX = (WorldX - CameraX) * Zoom
+                    tileScreenX = (tileWorldX - self.cameraX) * zoom
+                    tileScreenY = (tileWorldY - self.cameraY) * zoom
                     
-                    # 決定顏色：黑灰相間的邏輯
-                    # 如果 行號+列號 是偶數用顏色1，奇數用顏色2
+                    # 計算網格在螢幕上的大小
+                    gridSizeScreen = GRID_SIZE * zoom
+                    # 避免浮點數縫隙，稍微加一點點或者用 ceil? 通常不用，pygame.draw.rect 接受 float 會取整
+                    # 為了效能和畫面正確性，稍微重疊一點點無所謂，或是直接畫線
+                    
+                    # 決定顏色
                     if (row + col) % 2 == 0:
                         color = BLACK
                     else:
                         color = GRAY
                         
                     # 畫出這個網格矩形
+                    # 為了避免浮點數導致的細微縫隙 (Moire pattern 或 gap)，可以使用 ceil 或者 +1
                     pygame.draw.rect(surface, color, 
-                                     (tileScreenX, tileScreenY, GRID_SIZE, GRID_SIZE))
+                                     (tileScreenX, tileScreenY, gridSizeScreen + 1, gridSizeScreen + 1))
 
     def checkDeaths(self):
         # 檢查每一條蛇是否撞到別條蛇
@@ -228,25 +239,26 @@ class GAME():
             self.food.append(food)
 
     def draw(self):
-        # 1. 計算虛擬畫布大小
-        virtualWidth = int(SCREEN_WIDTH / self.zoom)
-        virtualHeight = int(SCREEN_HEIGHT / self.zoom)
+        # 1. 計算 Camera 位置 (讓蛇頭在螢幕中心)
+        # CameraX = HeadX - (ScreenW / Zoom) / 2
+        # 這一步其實在 update 做過了，但這裡是 rendering 階段，確保最新
+        # self.cameraX 已經是 World 座標
         
-        # 2. 建立虛擬畫布
-        surface = pygame.Surface((virtualWidth, virtualHeight))
-        surface.fill(BLACK)
+        # 2. 直接畫在 self.screen 上，不需要 virtual surface
+        self.screen.fill(BLACK) # 清空螢幕
         
-        # 3. 所有的 draw 都要改畫在 surface 上
-        self.drawGrid(surface) # drawGrid 需要這傳入 surface
+        # 3. 畫網格 (傳入 zoom)
+        self.drawGrid(self.screen, self.zoom)
+        
+        # 4. 畫食物
         for food in self.food:
-            food.draw(surface, self.cameraX, self.cameraY)
+            food.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
+            
+        # 5. 畫蛇
         for snake in self.snakes:
-            snake.draw(surface, self.cameraX, self.cameraY)
+            snake.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
         
-        # 4. 縮放回螢幕大小並顯示
-        scaledSurface = pygame.transform.smoothscale(surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.screen.blit(scaledSurface, (0, 0))
-        
+        # 6. UI 文字
         playerHead = self.snakes[0].head
         coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)}) L:{self.snakes[0].length} Z:{self.zoom:.2f}"
         textSurface = self.font.render(coord, True, WHITE)
