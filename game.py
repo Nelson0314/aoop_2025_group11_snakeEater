@@ -260,7 +260,7 @@ class GAME():
         
         # 6. UI 文字
         playerHead = self.snakes[0].head
-        coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)}) L:{self.snakes[0].length} Z:{self.zoom:.2f}"
+        coord = f"Score: {self.snakes[0].score} World: ({int(playerHead.centerx)}, {int(playerHead.centery)}) L:{self.snakes[0].length} Z:{self.zoom:.2f}"
         textSurface = self.font.render(coord, True, WHITE)
         self.screen.blit(textSurface, (10, 10))
 
