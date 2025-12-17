@@ -80,11 +80,11 @@ class GAME():
             # length 是節點數量, spacing 是節點間距
             snake_length_world = player.length * player.spacing
             
-            # 目標：畫面寬度 (Virtual Width) = 蛇身長度 * 0.9
-            # 也就意味著蛇身長度會佔畫面的 1 / 0.9 = 1.11 倍 (也就是超出畫面一點點)
-            # 或者是 畫面寬度 = 0.9 * snake_length_world ???
-            # User said: "畫面寬度始終是蛇身長度的90%" -> Screen Width (in World Units) = 0.9 * Snake Length
-            target_virtual_width = snake_length_world * 0.9
+            # 目標：畫面寬度 (Virtual Width) = 蛇身長度 * 0.4
+            # 也就意味著蛇身長度會佔畫面的 1 / 0.4 = 2.5 倍
+            # 或者是 畫面寬度 = 0.4 * snake_length_world
+            # User said: "改成畫面寬度的40%" -> Screen Width (in World Units) = 0.4 * Snake Length
+            target_virtual_width = snake_length_world * 0.4
             
             # 避免除以 0 或過小
             if target_virtual_width < 100:
