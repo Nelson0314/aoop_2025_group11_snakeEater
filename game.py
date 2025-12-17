@@ -71,16 +71,13 @@ class GAME():
             self.checkCollision(snake)
             snake.move()
         
-        # 根據玩家蛇長度動態調整 Zoom
-        # 根據玩家蛇長度動態調整 Zoom
-        # 畫面寬度始終是蛇身長度的40%
         player = self.snakes[0]
         if isinstance(player, playerSnake):
             # 計算蛇的實際長度
             # length 是節點數量, spacing 是節點間距
             snakeLengthWorld = player.length * player.spacing
             
-            targetVirtualWidth = snakeLengthWorld * 2.5
+            targetVirtualWidth = snakeLengthWorld * 3
             
             # 避免除以 0 或過小
             if targetVirtualWidth < 100:
@@ -113,10 +110,8 @@ class GAME():
             distance = math.sqrt(dx ** 2 + dy ** 2)
             
             # 判斷標準：距離 < (蛇頭半徑 + 食物半徑)
-            # TILE_SIZE//2 是蛇頭半徑
-            # 判斷標準：距離 < (蛇頭半徑 + 食物半徑)
-            # TILE_SIZE//2 是蛇頭半徑
-            if distance < (TILE_SIZE // 2) + food.radius:
+            # 使用動態半徑 snake.radius
+            if distance < snake.radius + food.radius:
                 
                 # 1. 蛇變長
                 snake.grow(food.growthValue)
@@ -193,8 +188,8 @@ class GAME():
 
     def isDead(self, snake):
         # 檢查 snake 是否撞到 OTHER snakes 的 body
-        # 蛇頭半徑
-        headRadius = TILE_SIZE // 2
+        # 蛇頭半徑 (現在是動態的)
+        headRadius = snake.radius
         
         for otherSnake in self.snakes:
             if otherSnake == snake:
@@ -208,8 +203,10 @@ class GAME():
                 dy = snake.head.centery - bodyPart.centery
                 dist = math.sqrt(dx**2 + dy**2)
                 
-                # 如果距離小於兩者半徑之和 (TILE_SIZE)，就算碰撞
-                if dist < TILE_SIZE:
+                # 如果距離小於兩者半徑之和 (TILE_SIZE -> snake.radius + otherSnake.radius)，就算碰撞
+                # 注意: otherSnake 的每個 bodyPart 原本是 Rect(TILE_SIZE)，但我們畫的時候是用 circle radius
+                # 所以這裡最好還是用 otherSnake.radius 來判斷
+                if dist < snake.radius + otherSnake.radius:
                     return True
         return False
 

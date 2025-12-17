@@ -21,12 +21,18 @@ class Snake():
             self.body.append(pygame.Rect(spawnX, spawnY, TILE_SIZE, TILE_SIZE))
         self.head = self.body[0]
 
+    @property
+    def radius(self):
+        # 根據長度決定半徑: radius = length // 2
+        # 設定一個最小值以免太小看不到 (例如 1)
+        return max(1, self.length // 2)
+
     def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
             screenCenterX = tile.centerx - cameraX
             screenCenterY = tile.centery - cameraY
 
-            pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), 10, 0)
+            pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), self.radius, 0)
 
     def grow(self, amount=1): 
         self.length += amount
@@ -36,7 +42,10 @@ class Snake():
         
         newX = head.centerx + self.direction.x * self.speed
         newY = head.centery + self.direction.y * self.speed
-        radius = TILE_SIZE // 2
+        
+        # 使用動態半徑進行邊界檢查
+        radius = self.radius 
+        
         if newX - radius < 0: 
             newX = radius
         elif newX + radius > MAP_WIDTH: 
