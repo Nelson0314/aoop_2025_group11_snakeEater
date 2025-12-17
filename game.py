@@ -17,6 +17,7 @@ class GAME():
         self.large_font = pygame.font.SysFont(None, 72) # 大字體用於標題
         
         self.state = 'playing' # 'playing' or 'game_over'
+        self.zoom = 1.0
 
         self.setUp()
 
@@ -70,10 +71,28 @@ class GAME():
             self.checkCollision(snake)
             snake.move()
         
+            self.checkCollision(snake)
+            snake.move()
+        
+        # 根據玩家蛇長度動態調整 Zoom
+        # 長度越長，Zoom 越小 (看越廣)
+        # 假設長度每增加 10，zoom 減少 0.01，最低 0.5
+        player = self.snakes[0]
+        if isinstance(player, playerSnake):
+            target_zoom = max(0.5, 1.0 - (player.length - 10) * 0.002)
+            # 平滑過度
+            self.zoom += (target_zoom - self.zoom) * 0.05
+        
         self.checkDeaths()
 
-        self.cameraX = self.snakes[0].head.centerx - SCREEN_WIDTH / 2
-        self.cameraY = self.snakes[0].head.centery - SCREEN_HEIGHT / 2
+        # 這裡的 cameraX, cameraY 要對應 "虛擬" 座標
+        # 螢幕中心在虛擬空間中的位置 = 玩家頭部位置
+        # 因為我們要畫在一個 virtual_width x virtual_height 的畫布上
+        virtual_width = SCREEN_WIDTH / self.zoom
+        virtual_height = SCREEN_HEIGHT / self.zoom
+        
+        self.cameraX = self.snakes[0].head.centerx - virtual_width / 2
+        self.cameraY = self.snakes[0].head.centery - virtual_height / 2
 
     def checkCollision(self, snake):
         for i in range(len(self.food) - 1, -1, -1):
@@ -100,18 +119,19 @@ class GAME():
                 # 4. 立刻補充一個同類型的食物，保持總量平衡
                 self.spawnFood(eatenType)
     
-    def drawGrid(self):
+    def drawGrid(self, surface):
         """
         高效繪製網格背景。只繪製螢幕可見範圍內的網格。
         """
-        # 計算螢幕左上角在世界座標中的哪個「行 (row)」和「列 (col)」開始
-        # 這裡多減 1 是為了確保邊緣不會有閃爍的空隙
+        # 計算虛擬畫面需含蓋的範圍
+        virtual_width = SCREEN_WIDTH / self.zoom
+        virtual_height = SCREEN_HEIGHT / self.zoom
+        
         start_col = int(self.cameraX // GRID_SIZE) - 1
         start_row = int(self.cameraY // GRID_SIZE) - 1
 
-        # 計算螢幕需要畫多少行和列才能填滿
-        cols_to_draw = SCREEN_WIDTH // GRID_SIZE + 4
-        rows_to_draw = SCREEN_HEIGHT // GRID_SIZE + 4
+        cols_to_draw = int(virtual_width // GRID_SIZE) + 4
+        rows_to_draw = int(virtual_height // GRID_SIZE) + 4
 
         # 開始雙重迴圈繪製網格
         for row in range(start_row, start_row + rows_to_draw):
@@ -137,7 +157,7 @@ class GAME():
                         color = GRAY
                         
                     # 畫出這個網格矩形
-                    pygame.draw.rect(self.screen, color, 
+                    pygame.draw.rect(surface, color, 
                                      (tile_screen_x, tile_screen_y, GRID_SIZE, GRID_SIZE))
 
     def checkDeaths(self):
@@ -200,15 +220,27 @@ class GAME():
             self.food.append(food)
 
     def draw(self):
-        self.screen.fill(BLACK)
-        self.drawGrid()
+        # 1. 計算虛擬畫布大小
+        virtual_width = int(SCREEN_WIDTH / self.zoom)
+        virtual_height = int(SCREEN_HEIGHT / self.zoom)
+        
+        # 2. 建立虛擬畫布
+        surface = pygame.Surface((virtual_width, virtual_height))
+        surface.fill(BLACK)
+        
+        # 3. 所有的 draw 都要改畫在 surface 上
+        self.drawGrid(surface) # drawGrid 需要這傳入 surface
         for food in self.food:
-            food.draw(self.screen, self.cameraX, self.cameraY)
+            food.draw(surface, self.cameraX, self.cameraY)
         for snake in self.snakes:
-            snake.draw(self.screen, self.cameraX, self.cameraY)
+            snake.draw(surface, self.cameraX, self.cameraY)
+        
+        # 4. 縮放回螢幕大小並顯示
+        scaled_surface = pygame.transform.smoothscale(surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen.blit(scaled_surface, (0, 0))
         
         playerHead = self.snakes[0].head
-        coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)})"
+        coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)}) L:{self.snakes[0].length} Z:{self.zoom:.2f}"
         textSurface = self.font.render(coord, True, WHITE)
         self.screen.blit(textSurface, (10, 10))
 
