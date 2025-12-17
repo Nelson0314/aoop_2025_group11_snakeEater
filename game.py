@@ -14,6 +14,9 @@ class GAME():
         self.cameraX = 0
         self.cameraY = 0
         self.font = pygame.font.SysFont(None, 18)
+        self.large_font = pygame.font.SysFont(None, 72) # 大字體用於標題
+        
+        self.state = 'playing' # 'playing' or 'game_over'
 
         self.setUp()
 
@@ -44,9 +47,21 @@ class GAME():
         self.food.append(newFood)
 
     def handleEvent(self):
-        pass
+        keys = pygame.key.get_pressed()
+        if self.state == 'game_over':
+            if keys[pygame.K_r]:
+                self.restartGame()
+
+    def restartGame(self):
+        self.snakes = []
+        self.food = []
+        self.state = 'playing'
+        self.setUp()
 
     def update(self):
+        if self.state != 'playing':
+            return
+
         for snake in self.snakes:
             if isinstance(snake, playerSnake):
                 snake.updateDirectionByMouse()
@@ -142,11 +157,8 @@ class GAME():
                     self.snakes.append(new_snake)
                 # 如果是玩家死掉，這裡暫時不重生 (或者可以重生，看需求)
                 elif isinstance(snake, playerSnake):
-                    # 簡單處理：玩家死掉也重生在隨機位置，不退出遊戲
-                    cx = random.randint(100, MAP_WIDTH - 100)
-                    cy = random.randint(100, MAP_HEIGHT - 100)
-                    new_player = playerSnake(cx, cy, WHITE)
-                    self.snakes.append(new_player)
+                    self.state = 'game_over'
+                    # 玩家死掉不自動重生，等待玩家按 R 重玩
 
     def isDead(self, snake):
         # 檢查 snake 是否撞到 OTHER snakes 的 body
@@ -199,3 +211,23 @@ class GAME():
         coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)})"
         textSurface = self.font.render(coord, True, WHITE)
         self.screen.blit(textSurface, (10, 10))
+
+        if self.state == 'game_over':
+            self.drawGameOver()
+
+    def drawGameOver(self):
+        # 半透明黑色遮罩
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        overlay.set_alpha(150)
+        overlay.fill(BLACK)
+        self.screen.blit(overlay, (0, 0))
+        
+        # Game Over 文字
+        title_text = self.large_font.render("GAME OVER", True, (255, 50, 50))
+        title_rect = title_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50))
+        self.screen.blit(title_text, title_rect)
+        
+        # Restart 提示
+        hint_text = self.font.render("Press 'R' to Restart", True, WHITE)
+        hint_rect = hint_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20))
+        self.screen.blit(hint_text, hint_rect)

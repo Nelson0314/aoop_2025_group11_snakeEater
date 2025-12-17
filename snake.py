@@ -15,9 +15,9 @@ class Snake():
         self.length = 10
         self.body = []
         for i in range(self.length):
-            # 初始時讓身體往左邊延伸，避免全部疊在一起
+            # 初始時讓身體往下方延伸，避免全部疊在一起
             spawn_x = x 
-            spawn_y = y - i * self.spacing
+            spawn_y = y + i * self.spacing
             self.body.append(pygame.Rect(spawn_x, spawn_y, TILE_SIZE, TILE_SIZE))
         self.head = self.body[0]
 
