@@ -71,17 +71,41 @@ class GAME():
             self.checkCollision(snake)
             snake.move()
         
-            self.checkCollision(snake)
-            snake.move()
-        
         # 根據玩家蛇長度動態調整 Zoom
-        # 長度越長，Zoom 越小 (看越廣)
-        # 假設長度每增加 10，zoom 減少 0.01，最低 0.5
+        # 改為計算玩家蛇的 Bounding Box，確保整條蛇都在畫面內
         player = self.snakes[0]
         if isinstance(player, playerSnake):
-            target_zoom = max(0.5, 1.0 - (player.length - 10) * 0.002)
-            # 平滑過度
-            self.zoom += (target_zoom - self.zoom) * 0.05
+            # 取得蛇身體所有節點的 x 和 y 座標
+            xs = [p.centerx for p in player.body]
+            ys = [p.centery for p in player.body]
+            
+            if xs and ys:
+                min_x, max_x = min(xs), max(xs)
+                min_y, max_y = min(ys), max(ys)
+                
+                # 計算蛇佔據的寬高
+                snake_width = max_x - min_x
+                snake_height = max_y - min_y
+                
+                # 加上一點邊距 (Padding)，例如上下左右各留 200 pixel
+                padding = 400 
+                needed_width = snake_width + padding
+                needed_height = snake_height + padding
+                
+                # 計算需要的 zoom level
+                # Zoom = Screen / Needed
+                zoom_x = SCREEN_WIDTH / needed_width
+                zoom_y = SCREEN_HEIGHT / needed_height
+                
+                # 取較小的 zoom 以確保寬高都能容納
+                target_zoom = min(zoom_x, zoom_y)
+                
+                # 限制 zoom 範圍，不要縮太小也不要放太大
+                # 最遠看 0.3 倍，最近看 1.0 倍
+                target_zoom = max(0.3, min(1.0, target_zoom))
+                
+                # 平滑過度
+                self.zoom += (target_zoom - self.zoom) * 0.05
         
         self.checkDeaths()
 
