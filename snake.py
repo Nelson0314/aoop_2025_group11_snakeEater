@@ -7,12 +7,11 @@ class Snake():
         self.y = y
         self.color = color
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-        self.length = 10
+        self.score = 0
         self.direction = pygame.Vector2(1, 0)
         self.speed = 5
         # self.spacing = 15 (Removed, now a property)
         
-        self.length = 10
         self.body = []
         for i in range(self.length):
             # 初始時讓身體往下方延伸，避免全部疊在一起
@@ -20,6 +19,11 @@ class Snake():
             spawnY = y + i * self.spacing
             self.body.append(pygame.Rect(spawnX, spawnY, TILE_SIZE, TILE_SIZE))
         self.head = self.body[0]
+
+    @property
+    def length(self):
+        # 蛇的長度改成 10 + sqrt(5 * score)
+        return 10 + int(math.sqrt(5 * self.score))
 
     @property
     def radius(self):
@@ -43,7 +47,8 @@ class Snake():
             pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
 
     def grow(self, amount=1): 
-        self.length += amount
+        # 吃食物增加分數
+        self.score += amount
 
     def move(self):
         head = self.body[0]
