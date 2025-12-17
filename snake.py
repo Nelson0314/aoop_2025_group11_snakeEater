@@ -23,14 +23,14 @@ class Snake():
 
     @property
     def radius(self):
-        # 根據長度決定半徑: radius = length // 2
+        # 根據長度決定半徑: radius = length * 1.8
         # 設定一個最小值以免太小看不到 (例如 1)
-        return max(1, self.length // 2)
+        return int(max(1, self.length * 1.8))
 
     @property
     def spacing(self):
-        # body每一節的間距也要動態調整成 0.9 radius
-        return self.radius * 0.9
+        # body每一節的間距也要動態調整成 radius
+        return self.radius
 
     def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
