@@ -27,9 +27,8 @@ class Snake():
 
     @property
     def radius(self):
-        # 根據長度決定半徑: radius = length * 1.8
-        # 設定一個最小值以免太小看不到 (例如 1)
-        return int(max(1, self.length * 1.8))
+        # 根據長度決定半徑: radius = length * 1.5
+        return self.length * 1.5
 
     @property
     def spacing(self):
