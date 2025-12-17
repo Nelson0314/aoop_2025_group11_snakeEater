@@ -10,7 +10,7 @@ class Snake():
         self.length = 10
         self.direction = pygame.Vector2(1, 0)
         self.speed = 5
-        self.spacing = 15
+        # self.spacing = 15 (Removed, now a property)
         
         self.length = 10
         self.body = []
@@ -26,6 +26,11 @@ class Snake():
         # 根據長度決定半徑: radius = length // 2
         # 設定一個最小值以免太小看不到 (例如 1)
         return max(1, self.length // 2)
+
+    @property
+    def spacing(self):
+        # body每一節的間距也要動態調整成 0.9 radius
+        return self.radius * 0.9
 
     def draw(self, screen, cameraX, cameraY):
         for tile in self.body:
