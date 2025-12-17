@@ -72,40 +72,29 @@ class GAME():
             snake.move()
         
         # 根據玩家蛇長度動態調整 Zoom
-        # 改為計算玩家蛇的 Bounding Box，確保整條蛇都在畫面內
+        # 根據玩家蛇長度動態調整 Zoom
+        # 畫面寬度始終是蛇身長度的90%
         player = self.snakes[0]
         if isinstance(player, playerSnake):
-            # 取得蛇身體所有節點的 x 和 y 座標
-            xs = [p.centerx for p in player.body]
-            ys = [p.centery for p in player.body]
+            # 計算蛇的實際長度
+            # length 是節點數量, spacing 是節點間距
+            snake_length_world = player.length * player.spacing
             
-            if xs and ys:
-                min_x, max_x = min(xs), max(xs)
-                min_y, max_y = min(ys), max(ys)
-                
-                # 計算蛇佔據的寬高
-                snake_width = max_x - min_x
-                snake_height = max_y - min_y
-                
-                # 加上一點邊距 (Padding)，例如上下左右各留 200 pixel
-                padding = 400 
-                needed_width = snake_width + padding
-                needed_height = snake_height + padding
-                
-                # 計算需要的 zoom level
-                # Zoom = Screen / Needed
-                zoom_x = SCREEN_WIDTH / needed_width
-                zoom_y = SCREEN_HEIGHT / needed_height
-                
-                # 取較小的 zoom 以確保寬高都能容納
-                target_zoom = min(zoom_x, zoom_y)
-                
-                # 限制 zoom 範圍，不要縮太小也不要放太大
-                # 最遠看 0.3 倍，最近看 1.0 倍
-                target_zoom = max(0.3, min(1.0, target_zoom))
-                
-                # 平滑過度
-                self.zoom += (target_zoom - self.zoom) * 0.05
+            # 目標：畫面寬度 (Virtual Width) = 蛇身長度 * 0.9
+            # 也就意味著蛇身長度會佔畫面的 1 / 0.9 = 1.11 倍 (也就是超出畫面一點點)
+            # 或者是 畫面寬度 = 0.9 * snake_length_world ???
+            # User said: "畫面寬度始終是蛇身長度的90%" -> Screen Width (in World Units) = 0.9 * Snake Length
+            target_virtual_width = snake_length_world * 0.9
+            
+            # 避免除以 0 或過小
+            if target_virtual_width < 100:
+                target_virtual_width = 100
+
+            # Zoom = Screen Pixel Width / Virtual World Width
+            target_zoom = SCREEN_WIDTH / target_virtual_width
+            
+            # 平滑過度
+            self.zoom += (target_zoom - self.zoom) * 0.05
         
         self.checkDeaths()
 
