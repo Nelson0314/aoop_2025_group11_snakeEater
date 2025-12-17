@@ -22,9 +22,9 @@ class GAME():
         self.setUp()
 
     def setUp(self):
-        xcentre = SCREEN_WIDTH / 2
-        ycentre = SCREEN_HEIGHT / 2
-        player = playerSnake(xcentre, ycentre, WHITE)
+        xCentre = SCREEN_WIDTH / 2
+        yCentre = SCREEN_HEIGHT / 2
+        player = playerSnake(xCentre, yCentre, WHITE)
         self.snakes.append(player)
 
         # 這裡加入電腦蛇 (紅色的)
@@ -78,30 +78,30 @@ class GAME():
         if isinstance(player, playerSnake):
             # 計算蛇的實際長度
             # length 是節點數量, spacing 是節點間距
-            snake_length_world = player.length * player.spacing
+            snakeLengthWorld = player.length * player.spacing
             
-            target_virtual_width = snake_length_world * 3
+            targetVirtualWidth = snakeLengthWorld * 2.5
             
             # 避免除以 0 或過小
-            if target_virtual_width < 100:
-                target_virtual_width = 100
+            if targetVirtualWidth < 100:
+                targetVirtualWidth = 100
 
             # Zoom = Screen Pixel Width / Virtual World Width
-            target_zoom = SCREEN_WIDTH / target_virtual_width
+            targetZoom = SCREEN_WIDTH / targetVirtualWidth
             
             # 平滑過度
-            self.zoom += (target_zoom - self.zoom) * 0.05
+            self.zoom += (targetZoom - self.zoom) * 0.05
         
         self.checkDeaths()
 
         # 這裡的 cameraX, cameraY 要對應 "虛擬" 座標
         # 螢幕中心在虛擬空間中的位置 = 玩家頭部位置
         # 因為我們要畫在一個 virtual_width x virtual_height 的畫布上
-        virtual_width = SCREEN_WIDTH / self.zoom
-        virtual_height = SCREEN_HEIGHT / self.zoom
+        virtualWidth = SCREEN_WIDTH / self.zoom
+        virtualHeight = SCREEN_HEIGHT / self.zoom
         
-        self.cameraX = self.snakes[0].head.centerx - virtual_width / 2
-        self.cameraY = self.snakes[0].head.centery - virtual_height / 2
+        self.cameraX = self.snakes[0].head.centerx - virtualWidth / 2
+        self.cameraY = self.snakes[0].head.centery - virtualHeight / 2
 
     def checkCollision(self, snake):
         for i in range(len(self.food) - 1, -1, -1):
@@ -114,10 +114,12 @@ class GAME():
             
             # 判斷標準：距離 < (蛇頭半徑 + 食物半徑)
             # TILE_SIZE//2 是蛇頭半徑
+            # 判斷標準：距離 < (蛇頭半徑 + 食物半徑)
+            # TILE_SIZE//2 是蛇頭半徑
             if distance < (TILE_SIZE // 2) + food.radius:
                 
                 # 1. 蛇變長
-                snake.grow(food.growth_value)
+                snake.grow(food.growthValue)
                 
                 # 2. 記錄這個食物的類型 (為了重生)
                 eatenType = food.type
@@ -133,30 +135,30 @@ class GAME():
         高效繪製網格背景。只繪製螢幕可見範圍內的網格。
         """
         # 計算虛擬畫面需含蓋的範圍
-        virtual_width = SCREEN_WIDTH / self.zoom
-        virtual_height = SCREEN_HEIGHT / self.zoom
+        virtualWidth = SCREEN_WIDTH / self.zoom
+        virtualHeight = SCREEN_HEIGHT / self.zoom
         
-        start_col = int(self.cameraX // GRID_SIZE) - 1
-        start_row = int(self.cameraY // GRID_SIZE) - 1
+        startCol = int(self.cameraX // GRID_SIZE) - 1
+        startRow = int(self.cameraY // GRID_SIZE) - 1
 
-        cols_to_draw = int(virtual_width // GRID_SIZE) + 4
-        rows_to_draw = int(virtual_height // GRID_SIZE) + 4
+        colsToDraw = int(virtualWidth // GRID_SIZE) + 4
+        rowsToDraw = int(virtualHeight // GRID_SIZE) + 4
 
         # 開始雙重迴圈繪製網格
-        for row in range(start_row, start_row + rows_to_draw):
-            for col in range(start_col, start_col + cols_to_draw):
+        for row in range(startRow, startRow + rowsToDraw):
+            for col in range(startCol, startCol + colsToDraw):
                 
                 # 計算這個網格的世界座標 (左上角)
-                tile_world_x = col * GRID_SIZE
-                tile_world_y = row * GRID_SIZE
+                tileWorldX = col * GRID_SIZE
+                tileWorldY = row * GRID_SIZE
 
                 # 【關鍵】檢查這個網格是否在 10000x10000 的地圖範圍內
                 # 如果超出範圍，就不畫 (顯示底下的純黑色背景)
-                if 0 <= tile_world_x < MAP_WIDTH and 0 <= tile_world_y < MAP_HEIGHT:
+                if 0 <= tileWorldX < MAP_WIDTH and 0 <= tileWorldY < MAP_HEIGHT:
                     
                     # 計算螢幕座標
-                    tile_screen_x = tile_world_x - self.cameraX
-                    tile_screen_y = tile_world_y - self.cameraY
+                    tileScreenX = tileWorldX - self.cameraX
+                    tileScreenY = tileWorldY - self.cameraY
                     
                     # 決定顏色：黑灰相間的邏輯
                     # 如果 行號+列號 是偶數用顏色1，奇數用顏色2
@@ -167,7 +169,7 @@ class GAME():
                         
                     # 畫出這個網格矩形
                     pygame.draw.rect(surface, color, 
-                                     (tile_screen_x, tile_screen_y, GRID_SIZE, GRID_SIZE))
+                                     (tileScreenX, tileScreenY, GRID_SIZE, GRID_SIZE))
 
     def checkDeaths(self):
         # 檢查每一條蛇是否撞到別條蛇
@@ -182,8 +184,8 @@ class GAME():
                 if isinstance(snake, ComputerSnake):
                     cx = random.randint(100, MAP_WIDTH - 100)
                     cy = random.randint(100, MAP_HEIGHT - 100)
-                    new_snake = ComputerSnake(cx, cy, (255, 0, 0))
-                    self.snakes.append(new_snake)
+                    newSnake = ComputerSnake(cx, cy, (255, 0, 0))
+                    self.snakes.append(newSnake)
                 # 如果是玩家死掉，這裡暫時不重生 (或者可以重生，看需求)
                 elif isinstance(snake, playerSnake):
                     self.state = 'game_over'
@@ -192,18 +194,18 @@ class GAME():
     def isDead(self, snake):
         # 檢查 snake 是否撞到 OTHER snakes 的 body
         # 蛇頭半徑
-        head_radius = TILE_SIZE // 2
+        headRadius = TILE_SIZE // 2
         
-        for other_snake in self.snakes:
-            if other_snake == snake:
+        for otherSnake in self.snakes:
+            if otherSnake == snake:
                 continue
             
             # 遍歷對方的身體
-            for body_part in other_snake.body:
+            for bodyPart in otherSnake.body:
                 # 簡單的圓形/矩形碰撞檢查
                 # 這裡用 center 距離比較準
-                dx = snake.head.centerx - body_part.centerx
-                dy = snake.head.centery - body_part.centery
+                dx = snake.head.centerx - bodyPart.centerx
+                dy = snake.head.centery - bodyPart.centery
                 dist = math.sqrt(dx**2 + dy**2)
                 
                 # 如果距離小於兩者半徑之和 (TILE_SIZE)，就算碰撞
@@ -219,22 +221,22 @@ class GAME():
             rect = snake.body[i]
             # 隨機產生這坨肉是什麼等級的食物
             # 大部分是 medium，偶爾 large
-            rand_val = random.random()
-            if rand_val < 0.7:
-                f_type = 'medium'
+            randVal = random.random()
+            if randVal < 0.7:
+                fType = 'medium'
             else:
-                f_type = 'large'
+                fType = 'large'
             
-            food = Food(rect.centerx, rect.centery, f_type)
+            food = Food(rect.centerx, rect.centery, fType)
             self.food.append(food)
 
     def draw(self):
         # 1. 計算虛擬畫布大小
-        virtual_width = int(SCREEN_WIDTH / self.zoom)
-        virtual_height = int(SCREEN_HEIGHT / self.zoom)
+        virtualWidth = int(SCREEN_WIDTH / self.zoom)
+        virtualHeight = int(SCREEN_HEIGHT / self.zoom)
         
         # 2. 建立虛擬畫布
-        surface = pygame.Surface((virtual_width, virtual_height))
+        surface = pygame.Surface((virtualWidth, virtualHeight))
         surface.fill(BLACK)
         
         # 3. 所有的 draw 都要改畫在 surface 上
@@ -245,8 +247,8 @@ class GAME():
             snake.draw(surface, self.cameraX, self.cameraY)
         
         # 4. 縮放回螢幕大小並顯示
-        scaled_surface = pygame.transform.smoothscale(surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.screen.blit(scaled_surface, (0, 0))
+        scaledSurface = pygame.transform.smoothscale(surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen.blit(scaledSurface, (0, 0))
         
         playerHead = self.snakes[0].head
         coord = f"World: ({int(playerHead.centerx)}, {int(playerHead.centery)}) L:{self.snakes[0].length} Z:{self.zoom:.2f}"
@@ -264,11 +266,11 @@ class GAME():
         self.screen.blit(overlay, (0, 0))
         
         # Game Over 文字
-        title_text = self.large_font.render("GAME OVER", True, (255, 50, 50))
-        title_rect = title_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50))
-        self.screen.blit(title_text, title_rect)
+        titleText = self.large_font.render("GAME OVER", True, (255, 50, 50))
+        titleRect = titleText.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50))
+        self.screen.blit(titleText, titleRect)
         
         # Restart 提示
-        hint_text = self.font.render("Press 'R' to Restart", True, WHITE)
-        hint_rect = hint_text.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20))
-        self.screen.blit(hint_text, hint_rect)
+        hintText = self.font.render("Press 'R' to Restart", True, WHITE)
+        hintRect = hintText.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20))
+        self.screen.blit(hintText, hintRect)
