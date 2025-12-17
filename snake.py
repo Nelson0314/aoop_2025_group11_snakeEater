@@ -22,8 +22,8 @@ class Snake():
 
     @property
     def length(self):
-        # 蛇的長度改成 10 + sqrt(5 * score)
-        return 10 + int(math.sqrt(5 * self.score))
+        # 蛇的長度改成 10 + sqrt(score)
+        return 10 + int(math.sqrt(self.score))
 
     @property
     def radius(self):
