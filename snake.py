@@ -16,9 +16,9 @@ class Snake():
         self.body = []
         for i in range(self.length):
             # 初始時讓身體往下方延伸，避免全部疊在一起
-            spawn_x = x 
-            spawn_y = y + i * self.spacing
-            self.body.append(pygame.Rect(spawn_x, spawn_y, TILE_SIZE, TILE_SIZE))
+            spawnX = x 
+            spawnY = y + i * self.spacing
+            self.body.append(pygame.Rect(spawnX, spawnY, TILE_SIZE, TILE_SIZE))
         self.head = self.body[0]
 
     def draw(self, screen, cameraX, cameraY):
@@ -59,10 +59,10 @@ class Snake():
             dist = math.sqrt(dx**2 + dy**2)
             if dist > 0:
                 scale = self.spacing / dist
-                target_x = leader.centerx - dx * scale
-                target_y = leader.centery - dy * scale
-                follower.centerx = target_x
-                follower.centery = target_y
+                targetX = leader.centerx - dx * scale
+                targetY = leader.centery - dy * scale
+                follower.centerx = targetX
+                follower.centery = targetY
 
 class playerSnake(Snake):
     def __init__(self, x, y, color):
