@@ -74,3 +74,18 @@ class playerSnake(Snake):
             dirY = dirY / length
 
         self.direction = pygame.Vector2(dirX, dirY)
+
+class ComputerSnake(Snake):
+    def __init__(self, x, y, color):
+        super().__init__(x, y, color)
+        self.angle = 0
+
+    def updateDirection(self):
+        # 簡單的原地轉圈邏輯
+        self.angle += 5
+        if self.angle >= 360:
+            self.angle -= 360
+        
+        # 將角度轉換為方向向量
+        rad = math.radians(self.angle)
+        self.direction = pygame.Vector2(math.cos(rad), math.sin(rad))

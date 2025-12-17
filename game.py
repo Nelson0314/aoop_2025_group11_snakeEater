@@ -1,5 +1,5 @@
 import pygame
-from snake import Snake, playerSnake
+from snake import Snake, playerSnake, ComputerSnake
 from food import Food
 import random
 from settings import *
@@ -23,6 +23,15 @@ class GAME():
         player = playerSnake(xcentre, ycentre, WHITE)
         self.snakes.append(player)
 
+        # 這裡加入電腦蛇 (紅色的)
+        for _ in range(10):
+            # 隨機位置
+            cx = random.randint(100, MAP_WIDTH - 100)
+            cy = random.randint(100, MAP_HEIGHT - 100)
+            # 紅色
+            computer = ComputerSnake(cx, cy, (255, 0, 0))
+            self.snakes.append(computer)
+
         for foodType, count in FOOD_COUNTS.items():
             for _ in range(count):
                 self.spawnFood(foodType)
@@ -41,8 +50,12 @@ class GAME():
         for snake in self.snakes:
             if isinstance(snake, playerSnake):
                 snake.updateDirectionByMouse()
+            elif isinstance(snake, ComputerSnake):
+                snake.updateDirection()
             self.checkCollision(snake)
             snake.move()
+        
+        self.checkDeaths()
 
         self.cameraX = self.snakes[0].head.centerx - SCREEN_WIDTH / 2
         self.cameraY = self.snakes[0].head.centery - SCREEN_HEIGHT / 2
@@ -111,6 +124,68 @@ class GAME():
                     # 畫出這個網格矩形
                     pygame.draw.rect(self.screen, color, 
                                      (tile_screen_x, tile_screen_y, GRID_SIZE, GRID_SIZE))
+
+    def checkDeaths(self):
+        # 檢查每一條蛇是否撞到別條蛇
+        # 注意：要倒序遍歷，因為可能會移除元素
+        for i in range(len(self.snakes) - 1, -1, -1):
+            snake = self.snakes[i]
+            if self.isDead(snake):
+                self.killSnake(snake)
+                self.snakes.pop(i)
+                
+                # 如果是電腦蛇死掉，就重生一條新的，保持場上熱鬧
+                if isinstance(snake, ComputerSnake):
+                    cx = random.randint(100, MAP_WIDTH - 100)
+                    cy = random.randint(100, MAP_HEIGHT - 100)
+                    new_snake = ComputerSnake(cx, cy, (255, 0, 0))
+                    self.snakes.append(new_snake)
+                # 如果是玩家死掉，這裡暫時不重生 (或者可以重生，看需求)
+                elif isinstance(snake, playerSnake):
+                    # 簡單處理：玩家死掉也重生在隨機位置，不退出遊戲
+                    cx = random.randint(100, MAP_WIDTH - 100)
+                    cy = random.randint(100, MAP_HEIGHT - 100)
+                    new_player = playerSnake(cx, cy, WHITE)
+                    self.snakes.append(new_player)
+
+    def isDead(self, snake):
+        # 檢查 snake 是否撞到 OTHER snakes 的 body
+        # 蛇頭半徑
+        head_radius = TILE_SIZE // 2
+        
+        for other_snake in self.snakes:
+            if other_snake == snake:
+                continue
+            
+            # 遍歷對方的身體
+            for body_part in other_snake.body:
+                # 簡單的圓形/矩形碰撞檢查
+                # 這裡用 center 距離比較準
+                dx = snake.head.centerx - body_part.centerx
+                dy = snake.head.centery - body_part.centery
+                dist = math.sqrt(dx**2 + dy**2)
+                
+                # 如果距離小於兩者半徑之和 (TILE_SIZE)，就算碰撞
+                if dist < TILE_SIZE:
+                    return True
+        return False
+
+    def killSnake(self, snake):
+        # 將蛇的身體轉換成食物
+        # 為了避免食物太多，可以每隔幾個身體節點生成一個
+        step = 3 
+        for i in range(0, len(snake.body), step):
+            rect = snake.body[i]
+            # 隨機產生這坨肉是什麼等級的食物
+            # 大部分是 medium，偶爾 large
+            rand_val = random.random()
+            if rand_val < 0.7:
+                f_type = 'medium'
+            else:
+                f_type = 'large'
+            
+            food = Food(rect.centerx, rect.centery, f_type)
+            self.food.append(food)
 
     def draw(self):
         self.screen.fill(BLACK)
