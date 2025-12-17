@@ -2,19 +2,19 @@ import pygame
 from settings import FOOD_GROWTH, FOOD_RADIUS, FOOD_COLORS
 
 class Food:
-    def __init__(self, x, y, food_type):
+    def __init__(self, x, y, foodType):
         """
         :param x, y: 世界座標
-        :param food_type: 字串 'small', 'medium', 或 'large'
+        :param foodType: 字串 'small', 'medium', 或 'large'
         """
         self.x = x
         self.y = y
-        self.type = food_type
+        self.type = foodType
         
         # 根據類型，從 settings 載入對應的屬性
-        self.growth_value = FOOD_GROWTH[food_type] # 增加的長度
-        self.radius = FOOD_RADIUS[food_type]       # 半徑
-        self.color = FOOD_COLORS[food_type]        # 顏色
+        self.growthValue = FOOD_GROWTH[foodType] # 增加的長度
+        self.radius = FOOD_RADIUS[foodType]       # 半徑
+        self.color = FOOD_COLORS[foodType]        # 顏色
         
         # 建立一個矩形 (主要用於碰撞偵測的範圍概算，雖然我們是用圓形偵測)
         # 這裡的寬高設為直徑 (半徑*2)
@@ -25,7 +25,7 @@ class Food:
         """
         畫出食物，當然也要減去鏡頭偏移量
         """
-        screen_x = self.x - cameraX
-        screen_y = self.y - cameraY
+        screenX = self.x - cameraX
+        screenY = self.y - cameraY
         
-        pygame.draw.circle(screen, self.color, (int(screen_x), int(screen_y)), self.radius)
+        pygame.draw.circle(screen, self.color, (int(screenX), int(screenY)), self.radius)

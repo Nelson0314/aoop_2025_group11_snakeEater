@@ -80,7 +80,7 @@ class GAME():
             # length 是節點數量, spacing 是節點間距
             snake_length_world = player.length * player.spacing
             
-            target_virtual_width = snake_length_world * 2.5
+            target_virtual_width = snake_length_world * 3
             
             # 避免除以 0 或過小
             if target_virtual_width < 100:
