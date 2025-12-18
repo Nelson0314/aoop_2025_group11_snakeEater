@@ -62,6 +62,20 @@ def getState(snake, snakes, foods, mapWidth, mapHeight):
         foodU = closestFood.y < head.centery
         foodD = closestFood.y > head.centery
 
+    # 3. Combat Awareness: Enemy Head Near Body Segment 3
+    # Used for "Cut off" strategies
+    enemyHeadNearBody3 = False
+    if len(snake.body) >= 3:
+        targetBodyPart = snake.body[2] # 3rd segment (index 2)
+        detectionRadius = snake.radius * 4 # Detect within ~2 body widths
+        
+        for other in snakes:
+            if other == snake: continue
+            dist = math.hypot(other.head.centerx - targetBodyPart.centerx, other.head.centery - targetBodyPart.centery)
+            if dist < detectionRadius:
+                enemyHeadNearBody3 = True
+                break
+
     # Convert booleans to 0 or 1 integers for the state tuple
     state = (
         # Danger
@@ -79,7 +93,10 @@ def getState(snake, snakes, foods, mapWidth, mapHeight):
         int(foodL), 
         int(foodR), 
         int(foodU), 
-        int(foodD)
+        int(foodD),
+
+        # Combat (New)
+        int(enemyHeadNearBody3)
     )
     
     return state
