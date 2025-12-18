@@ -52,7 +52,7 @@ class GAME():
 
         # Create Computer Snakes
         # In learn mode, we might want MORE snakes to speed up training?
-        count = 20 if self.mode == 'learn' else 10 # More snakes in learn mode
+        count = 30 if self.mode == 'learn' else 10 # More snakes in learn mode
         
         for _ in range(count):
             cx = random.randint(100, MAP_WIDTH - 100)
