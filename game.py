@@ -4,7 +4,8 @@ from mlAgent import config
 import pygame
 import random
 import os
-    
+from settings import *
+
 
 class GAME():
     def __init__(self, screen, mode='play'):
