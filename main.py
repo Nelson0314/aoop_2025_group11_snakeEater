@@ -13,7 +13,7 @@ def main():
     pygame.display.set_caption(WINDOW_TITLE)
     clock = pygame.time.Clock()
 
-    game = GAME(screen)
+    game = GAME(screen, mode='play')
 
     running = True
     while running:

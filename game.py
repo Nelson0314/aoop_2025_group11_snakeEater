@@ -3,37 +3,52 @@ from mlAgent.utils import getState
 from mlAgent import config
 
 class GAME():
-    def __init__(self, screen):
+    def __init__(self, screen, mode='play'):
         self.screen = screen
+        self.mode = mode # 'play' or 'learn'
+        
         self.snakes = []
         self.food = []
         self.cameraX = 0
         self.cameraY = 0
         self.font = pygame.font.SysFont(None, 18)
-        self.largeFont = pygame.font.SysFont(None, 72) # 大字體用於標題
+        self.largeFont = pygame.font.SysFont(None, 72)
         
-        self.state = 'playing' # 'playing' or 'game_over'
+        self.state = 'playing'
         self.zoom = 1.0
 
-        # Initialize RL Agent
+        # RL Agent
         # Actions: 0=Straight, 1=Left, 2=Right
         self.agent = QLearningAgent(actions=[0, 1, 2])
-        self.agent.loadModel()
-        
+        if mode == 'play':
+             # In play mode, we might want to load model but NOT save it
+             # Or just load it to have smart enemies
+             self.agent.loadModel()
+        else:
+             self.agent.loadModel()
+
+        # Spectator / Camera Settings
+        self.spectatorIndex = 0 # Index of snake to follow in learn mode
+        self.cameraMode = 'follow' # 'follow' or 'god'
+        self.godViewZoom = 0.1 # Zoom level for God View (Seeing approx 1/3 of map)
+
         self.setUp()
 
     def setUp(self):
-        xCentre = SCREEN_WIDTH / 2
-        yCentre = SCREEN_HEIGHT / 2
-        player = playerSnake(xCentre, yCentre, WHITE)
-        self.snakes.append(player)
+        # Create Player ONLY in 'play' mode
+        if self.mode == 'play':
+            xCentre = SCREEN_WIDTH / 2
+            yCentre = SCREEN_HEIGHT / 2
+            player = playerSnake(xCentre, yCentre, WHITE)
+            self.snakes.append(player)
 
-        # 這裡加入電腦蛇 (紅色的)
-        for _ in range(10):
-            # 隨機位置
+        # Create Computer Snakes
+        # In learn mode, we might want MORE snakes to speed up training?
+        count = 20 if self.mode == 'learn' else 10 # More snakes in learn mode
+        
+        for _ in range(count):
             cx = random.randint(100, MAP_WIDTH - 100)
             cy = random.randint(100, MAP_HEIGHT - 100)
-            # 紅色
             computer = ComputerSnake(cx, cy, (255, 0, 0))
             self.snakes.append(computer)
 
@@ -44,12 +59,31 @@ class GAME():
     def spawnFood(self, foodType):
         x = random.randint(20, MAP_WIDTH - 20)
         y = random.randint(20, MAP_HEIGHT - 20)
-        
         newFood = Food(x, y, foodType)
         self.food.append(newFood)
 
     def handleEvent(self):
         keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+             if event.type == pygame.QUIT:
+                 pygame.quit()
+                 sys.exit()
+             
+             # Spectator Controls (Single Press)
+             if event.type == pygame.KEYDOWN and self.mode == 'learn':
+                 if event.key == pygame.K_a:
+                     self.spectatorIndex -= 1
+                     self.cameraMode = 'follow'
+                 elif event.key == pygame.K_d:
+                     self.spectatorIndex += 1
+                     self.cameraMode = 'follow'
+                 elif event.key == pygame.K_g:
+                     if self.cameraMode == 'god':
+                         self.cameraMode = 'follow'
+                     else:
+                         self.cameraMode = 'god'
+        
+        # Handle wraparound for spectator index safely later in update
         if self.state == 'game_over':
             if keys[pygame.K_r]:
                 self.restartGame()
@@ -61,15 +95,16 @@ class GAME():
         self.setUp()
 
     def update(self):
-        # Auto-save model periodically
-        if not hasattr(self, 'frameCount'):
-            self.frameCount = 0
-        self.frameCount += 1
-        if self.frameCount % config.MODEL_SAVE_INTERVAL == 0:
-            self.agent.saveModel()
-
         if self.state != 'playing':
             return
+
+        # Auto-save model (Only in learn mode)
+        if self.mode == 'learn':
+            if not hasattr(self, 'frameCount'):
+                self.frameCount = 0
+            self.frameCount += 1
+            if self.frameCount % config.MODEL_SAVE_INTERVAL == 0:
+                self.agent.saveModel()
 
         for snake in self.snakes:
             if isinstance(snake, playerSnake):
@@ -85,54 +120,60 @@ class GAME():
             self.checkCollision(snake)
             snake.move()
         
-        player = self.snakes[0]
-        if isinstance(player, playerSnake):
-            # 計算蛇的實際長度
-            # length 是節點數量, spacing 是節點間距
-            snakeLengthWorld = player.length * player.spacing
-            
-            targetVirtualWidth = snakeLengthWorld * 3
-            
-            # 避免除以 0 或過小
-            if targetVirtualWidth < 100:
-                targetVirtualWidth = 100
-
-            # Zoom = Screen Pixel Width / Virtual World Width
-            targetZoom = SCREEN_WIDTH / targetVirtualWidth
-            
-            # 平滑過度
-            self.zoom += (targetZoom - self.zoom) * 0.05
+        # Camera Update Logic
+        if self.mode == 'play':
+            player = self.snakes[0] # Assuming player is always [0]
+            if isinstance(player, playerSnake):
+                snakeLengthWorld = player.length * player.spacing
+                targetVirtualWidth = max(snakeLengthWorld * 3, 100)
+                targetZoom = SCREEN_WIDTH / targetVirtualWidth
+                self.zoom += (targetZoom - self.zoom) * 0.05
+                self.cameraX = player.head.centerx - (SCREEN_WIDTH / self.zoom) / 2
+                self.cameraY = player.head.centery - (SCREEN_HEIGHT / self.zoom) / 2
         
+        elif self.mode == 'learn':
+            if len(self.snakes) > 0:
+                 if self.cameraMode == 'god':
+                     # Desired: See a good chunk of map but not all (too laggy)
+                     # Let's say we want to see 3000x3000 area
+                     targetVirtualWidth = 3000
+                     targetZoom = SCREEN_WIDTH / targetVirtualWidth
+                     self.zoom += (targetZoom - self.zoom) * 0.05
+                     # Center of map
+                     self.cameraX = MAP_WIDTH/2 - (SCREEN_WIDTH / self.zoom) / 2
+                     self.cameraY = MAP_HEIGHT/2 - (SCREEN_HEIGHT / self.zoom) / 2
+                 
+                 else: # Follow Mode
+                     # Wrap index
+                     self.spectatorIndex %= len(self.snakes)
+                     targetSnake = self.snakes[self.spectatorIndex]
+                     
+                     # Simple fixed zoom for spectator for clarity
+                     targetZoom = 0.8
+                     self.zoom += (targetZoom - self.zoom) * 0.05
+                     
+                     self.cameraX = targetSnake.head.centerx - (SCREEN_WIDTH / self.zoom) / 2
+                     self.cameraY = targetSnake.head.centery - (SCREEN_HEIGHT / self.zoom) / 2
+            else:
+                self.spectatorIndex = 0
+
         self.checkDeaths()
 
-        # RL: Learning Step (For surviving snakes)
-        for snake in self.snakes:
-            if isinstance(snake, ComputerSnake) and hasattr(snake, 'stateOld'):
-                # Reward Logic
-                reward = config.REWARD_SURVIVAL # Survival reward
-                if snake.score > snake.scoreOld:
-                    reward = config.REWARD_EAT_FOOD # Eating reward
-                
-                # Check for Kill Reward
-                if snake.hasKilled:
-                    reward += config.REWARD_KILL
-                    snake.hasKilled = False
+        # RL: Learning Step (Only in learn mode)
+        if self.mode == 'learn':
+            for snake in self.snakes:
+                if isinstance(snake, ComputerSnake) and hasattr(snake, 'stateOld'):
+                    # Reward Logic
+                    reward = config.REWARD_SURVIVAL 
+                    if snake.score > snake.scoreOld:
+                        reward = config.REWARD_EAT_FOOD
+                    
+                    if snake.hasKilled:
+                        reward += config.REWARD_KILL
+                        snake.hasKilled = False
 
-                # Observe New State
-                snake.stateNew = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
-                
-                # Update Q-Table
-                self.agent.learn(snake.stateOld, snake.action, reward, snake.stateNew)
-
-        # 這裡的 cameraX, cameraY 要對應 "虛擬" 座標
-        # 螢幕中心在虛擬空間中的位置 = 玩家頭部位置
-        # 因為我們要畫在一個 virtual_width x virtual_height 的畫布上
-        virtualWidth = SCREEN_WIDTH / self.zoom
-        virtualHeight = SCREEN_HEIGHT / self.zoom
-        
-        if len(self.snakes) > 0:
-             self.cameraX = self.snakes[0].head.centerx - virtualWidth / 2
-             self.cameraY = self.snakes[0].head.centery - virtualHeight / 2
+                    snake.stateNew = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
+                    self.agent.learn(snake.stateOld, snake.action, reward, snake.stateNew)
 
     def checkCollision(self, snake):
         for i in range(len(self.food) - 1, -1, -1):
