@@ -1,6 +1,8 @@
 from mlAgent.qAgent import QLearningAgent
 from mlAgent.utils import getState
 from mlAgent import config
+import pygame
+import random
 
 class GAME():
     def __init__(self, screen, mode='play'):
