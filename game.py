@@ -7,7 +7,7 @@ import os
 from settings import *
 from snake import playerSnake, ComputerSnake
 from food import Food
-
+import math
 
 class GAME():
     def __init__(self, screen, mode='play'):
