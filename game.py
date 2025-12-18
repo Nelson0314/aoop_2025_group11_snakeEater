@@ -3,6 +3,8 @@ from mlAgent.utils import getState
 from mlAgent import config
 import pygame
 import random
+import os
+    
 
 class GAME():
     def __init__(self, screen, mode='play'):
