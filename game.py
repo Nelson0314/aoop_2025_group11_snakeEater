@@ -38,7 +38,7 @@ class GAME():
         # Spectator / Camera Settings
         self.spectatorSnake = None # The specific snake instance to follow
         self.cameraMode = 'follow' # 'follow' or 'god'
-        self.godViewZoom = 0.05 # Zoom level for God View (Seeing approx 1/3 of map)
+        self.godViewZoom = 0.1 # Zoom level for God View (Seeing approx 1/3 of map)
 
         self.setUp()
 
