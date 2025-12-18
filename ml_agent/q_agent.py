@@ -2,14 +2,16 @@ import random
 import pickle
 import os
 
+from ml_agent import config
+
 class QLearningAgent:
-    def __init__(self, actions, learning_rate=0.1, discount_factor=0.9, epsilon=0.1):
+    def __init__(self, actions, learning_rate=config.LEARNING_RATE, discount_factor=config.DISCOUNT_FACTOR, epsilon=config.EPSILON):
         self.q_table = {}  # (state, action) -> value
         self.actions = actions  # List of possible actions
         self.lr = learning_rate
         self.gamma = discount_factor
         self.epsilon = epsilon
-        self.model_file = "q_table.pkl"
+        self.model_file = config.MODEL_FILE_NAME
 
     def get_q_value(self, state, action):
         return self.q_table.get((state, action), 0.0)
