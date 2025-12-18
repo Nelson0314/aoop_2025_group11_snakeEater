@@ -5,6 +5,8 @@ import pygame
 import random
 import os
 from settings import *
+from snake import playerSnake, ComputerSnake
+from food import Food
 
 
 class GAME():
