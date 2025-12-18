@@ -35,9 +35,9 @@ class GAME():
              self.agent.loadModel()
 
         # Spectator / Camera Settings
-        self.spectatorIndex = 0 # Index of snake to follow in learn mode
+        self.spectatorSnake = None # The specific snake instance to follow
         self.cameraMode = 'follow' # 'follow' or 'god'
-        self.godViewZoom = 0.1 # Zoom level for God View (Seeing approx 1/3 of map)
+        self.godViewZoom = 0.05 # Zoom level for God View (Seeing approx 1/3 of map)
 
         self.setUp()
 
@@ -79,11 +79,9 @@ class GAME():
              # Spectator Controls (Single Press)
              if event.type == pygame.KEYDOWN and self.mode == 'learn':
                  if event.key == pygame.K_a:
-                     self.spectatorIndex -= 1
-                     self.cameraMode = 'follow'
+                     self.handleSpectatorSwitch(-1)
                  elif event.key == pygame.K_d:
-                     self.spectatorIndex += 1
-                     self.cameraMode = 'follow'
+                     self.handleSpectatorSwitch(1)
                  elif event.key == pygame.K_g:
                      if self.cameraMode == 'god':
                          self.cameraMode = 'follow'
@@ -94,6 +92,23 @@ class GAME():
         if self.state == 'game_over':
             if keys[pygame.K_r]:
                 self.restartGame()
+
+    def handleSpectatorSwitch(self, direction):
+        """
+        Switch spectator target to previous or next snake in the list.
+        direction: -1 for previous, 1 for next
+        """
+        if not self.snakes:
+            return
+
+        current_index = 0
+        if self.spectatorSnake in self.snakes:
+            current_index = self.snakes.index(self.spectatorSnake)
+        
+        # Calculate new index with wrap-around
+        new_index = (current_index + direction) % len(self.snakes)
+        self.spectatorSnake = self.snakes[new_index]
+        self.cameraMode = 'follow'
 
     def restartGame(self):
         self.snakes = []
@@ -151,9 +166,11 @@ class GAME():
                      self.cameraY = MAP_HEIGHT/2 - (SCREEN_HEIGHT / self.zoom) / 2
                  
                  else: # Follow Mode
-                     # Wrap index
-                     self.spectatorIndex %= len(self.snakes)
-                     targetSnake = self.snakes[self.spectatorIndex]
+                     # Ensure we have a valid spectator target
+                     if self.spectatorSnake not in self.snakes:
+                         self.spectatorSnake = self.snakes[0]
+                     
+                     targetSnake = self.spectatorSnake
                      
                      # Simple fixed zoom for spectator for clarity
                      targetZoom = 0.8
@@ -162,7 +179,7 @@ class GAME():
                      self.cameraX = targetSnake.head.centerx - (SCREEN_WIDTH / self.zoom) / 2
                      self.cameraY = targetSnake.head.centery - (SCREEN_HEIGHT / self.zoom) / 2
             else:
-                self.spectatorIndex = 0
+                self.spectatorSnake = None
 
         self.checkDeaths()
 

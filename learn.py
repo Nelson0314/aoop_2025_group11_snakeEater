@@ -34,7 +34,12 @@ def main():
         
         # Display instructions
         if game.cameraMode == 'follow':
-            status = f"Spectating: Snake {game.spectatorIndex} (A/D to switch)"
+            try:
+                # Try to find current index for display, default to ? if trouble
+                idx = game.snakes.index(game.spectatorSnake) if game.spectatorSnake in game.snakes else "?"
+            except:
+                idx = "?"
+            status = f"Spectating: Snake {idx} (A/D to switch)"
         else:
             status = "God View (G to toggle)"
             
