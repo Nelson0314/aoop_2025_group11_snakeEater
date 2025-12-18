@@ -6,7 +6,7 @@ from mlAgent import config
 
 WIDTH = 1280
 HEIGHT = 720
-FPS = 180
+FPS = 240
 WINDOW_TITLE = "Slither AI Training - Spectator Mode"
 
 def main():
