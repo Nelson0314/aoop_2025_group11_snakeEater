@@ -9,6 +9,7 @@ EPSILON = 0.1             # epsilon: Exploration rate (probability of choosing a
 REWARD_SURVIVAL = 0.1     # Reward for every frame the snake survives
 REWARD_EAT_FOOD = 50      # Reward for eating food
 REWARD_DEATH = -100       # Penalty for hitting a wall or another snake
+REWARD_KILL = 200         # Reward for causing another snake to die
 
 # Training settings
 MODEL_SAVE_INTERVAL = 1000 # Save the Q-table every N frames

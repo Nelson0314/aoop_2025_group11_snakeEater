@@ -107,6 +107,7 @@ class ComputerSnake(Snake):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.angle = 0
+        self.has_killed = False
 
     def perform_action(self, action):
         """

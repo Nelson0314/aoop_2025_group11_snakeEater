@@ -119,6 +119,11 @@ class GAME():
                 if snake.score > snake.score_old:
                     reward = config.REWARD_EAT_FOOD # Eating reward
                 
+                # Check for Kill Reward
+                if snake.has_killed:
+                    reward += config.REWARD_KILL
+                    snake.has_killed = False
+
                 # Observe New State
                 snake.state_new = get_state(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
                 
@@ -217,12 +222,17 @@ class GAME():
         # 注意：要倒序遍歷，因為可能會移除元素
         for i in range(len(self.snakes) - 1, -1, -1):
             snake = self.snakes[i]
-            if self.isDead(snake):
+            killer = self.getKiller(snake)
+            if killer:
                 
-                # RL: Death Penalty
+                # RL: Death Penalty for victim
                 if isinstance(snake, ComputerSnake) and hasattr(snake, 'state_old'):
                     self.agent.learn(snake.state_old, snake.action, config.REWARD_DEATH, snake.state_old)
                 
+                # RL: Kill Reward for killer
+                if killer and isinstance(killer, ComputerSnake):
+                    killer.has_killed = True # Flag to be picked up in the update loop
+
                 self.killSnake(snake)
                 self.snakes.pop(i)
                 
@@ -237,29 +247,38 @@ class GAME():
                     self.state = 'game_over'
                     # 玩家死掉不自動重生，等待玩家按 R 重玩
 
-    def isDead(self, snake):
+    def getKiller(self, snake):
         # 檢查 snake 是否撞到 OTHER snakes 的 body
-        # 蛇頭半徑 (現在是動態的)
-        headRadius = snake.radius
+        # 回傳造成撞擊的蛇 (killer)，如果沒撞到或是撞牆則回傳 True (代表死但無兇手) 或 None (活著)
+        # 為了相容邏輯：
+        # Return snake instance: Killed by snake
+        # Return True: Killed by wall
+        # Return False/None: Alive
         
+        headRadius = snake.radius
+        headX = snake.head.centerx
+        headY = snake.head.centery
+
+        # 1. 檢查牆壁
+        if headX < headRadius or headX > MAP_WIDTH - headRadius or \
+           headY < headRadius or headY > MAP_HEIGHT - headRadius:
+            return True # Killed by Wall
+
+        # 2. 檢查其他蛇
         for otherSnake in self.snakes:
             if otherSnake == snake:
                 continue
             
             # 遍歷對方的身體
             for bodyPart in otherSnake.body:
-                # 簡單的圓形/矩形碰撞檢查
-                # 這裡用 center 距離比較準
-                dx = snake.head.centerx - bodyPart.centerx
-                dy = snake.head.centery - bodyPart.centery
+                dx = headX - bodyPart.centerx
+                dy = headY - bodyPart.centery
                 dist = math.sqrt(dx**2 + dy**2)
                 
-                # 如果距離小於兩者半徑之和 (TILE_SIZE -> snake.radius + otherSnake.radius)，就算碰撞
-                # 注意: otherSnake 的每個 bodyPart 原本是 Rect(TILE_SIZE)，但我們畫的時候是用 circle radius
-                # 所以這裡最好還是用 otherSnake.radius 來判斷
                 if dist < snake.radius + otherSnake.radius:
-                    return True
-        return False
+                    return otherSnake # Killed by otherSnake
+        
+        return None # Alive
 
     def killSnake(self, snake):
         # 將蛇的身體轉換成食物

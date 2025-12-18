@@ -1,33 +1,29 @@
 # Machine Learning Architecture & Flow
 
-這個文檔說明了目前的 **Q-Learning** 架構，包含訓練流程圖以及狀態機 (State Machine) 的定義。
+這個文檔說明了目前的 **Q-Learning** 架構。
 
 ## 1. 訓練流程 (Training Loop)
 
-每一隻 AI 蛇在每一幀 (Frame) 都會經歷以下循環：
+每一隻 AI 蛇在每一幀 (Frame) 都會經歷以下步驟：
 
-```mermaid
-graph TD
-    A[觀察環境 Get State] --> B{查表 Select Action}
-    B -- 探索 Exploration (10%) --> C[隨機動作]
-    B -- 經驗 Exploitation (90%) --> D[選擇 Q 值最高的動作]
-    C --> E[執行動作 Perform Action]
-    D --> E
-    E --> F[更新遊戲物理狀態]
-    F --> G{發生什麼事?}
-    G -- 沒事 --> H[獎勵: +0.1]
-    G -- 吃到食物 --> I[獎勵: +50]
-    G -- 撞到牆壁/蛇 --> J[懲罰: -100]
-    H --> K[更新 Q-Table]
-    I --> K
-    J --> K
-    K --> A
-```
+1.  **觀察環境 (Get State)**: 獲取當前的 11-bit 狀態。
+2.  **查表決策 (Select Action)**:
+    *   90% 機率：選擇 Q 值最高的動作 (經驗)。
+    *   10% 機率：隨機選擇動作 (探索)。
+3.  **執行動作 (Perform Action)**: 直走、左轉或右轉。
+4.  **環境更新**: 移動蛇的位置，檢查碰撞。
+5.  **領取獎勵 (Reward)**:
+    *   **沒事發生**: +0.1 分 (生存獎勵)
+    *   **吃到食物**: +50 分
+    *   **擊殺敵人**: +200 分 (迫使別人撞到我)
+    *   **撞牆/死**: -100 分
+6.  **學習 (Update Q-Table)**: 根據公式更新 Q 表。
+7.  **循環**: 回到步驟 1。
 
 ## 2. 狀態機定義 (Finite State Definition)
 
-我們將連續的遊戲畫面簡化為有限的 **11 個 bit**，組合成一個 Tuple 作為 State ID。
-這意味著總共有 $2^{11} = 2048$ 種可能的狀態 (實際上會更少，因為方向互斥)。
+我們將連續的遊戲畫面簡化為有限的 **11 個 bit** (True/False)，組合成一個 Tuple 作為 State ID。
+這意味著總共有 $2^{11} = 2048$ 種可能的狀態。
 
 ### 狀態組成 (11 bits)
 
@@ -45,12 +41,6 @@ graph TD
 | | `food_up` | 最近的食物在上方 |
 | | `food_down` | 最近的食物在下方 |
 
-### 狀態範例
-例如，狀態 `(1, 0, 0,  0, 1, 0, 0,  1, 0, 0, 1)` 代表：
-*   **[Danger]**: 前方有危險 `(1, 0, 0)`
-*   **[Moving]**: 正在往右移動 `(0, 1, 0, 0)`
-*   **[Food]**: 食物在左下方 `(1, 0, 0, 1)`
-
 ## 3. 動作空間 (Action Space)
 
 AI 只能選擇以下三種動作之一：
@@ -58,12 +48,10 @@ AI 只能選擇以下三種動作之一：
 | Action ID | 動作 | 說明 |
 | :---: | :--- | :--- |
 | **0** | **直走** (Straight) | 保持目前方向不變 |
-| **1** | **左轉** (Left) | 向左轉 `config.TURN_ANGLE` 度 (預設 15 度) |
-| **2** | **右轉** (Right) | 向右轉 `config.TURN_ANGLE` 度 (預設 15 度) |
+| **1** | **左轉** (Left) | 向左轉 `config.TURN_ANGLE` 度 |
+| **2** | **右轉** (Right) | 向右轉 `config.TURN_ANGLE` 度 |
 
 ## 4. 學習公式 (Q-Learning Update)
-
-當 AI 執行動作 $A$ 在狀態 $S$，得到獎勵 $R$，並進入新狀態 $S'$ 時，我們這樣更新它的腦袋：
 
 $$Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma \max Q(S', a) - Q(S, A)]$$
 
