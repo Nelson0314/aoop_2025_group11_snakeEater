@@ -4,6 +4,7 @@ from mlAgent import config
 import pygame
 import random
 import os
+import sys
 from settings import *
 from snake import playerSnake, ComputerSnake
 from food import Food
@@ -157,9 +158,8 @@ class GAME():
             if len(self.snakes) > 0:
                  if self.cameraMode == 'god':
                      # Desired: See a good chunk of map but not all (too laggy)
-                     # Let's say we want to see 3000x3000 area
-                     targetVirtualWidth = 3000
-                     targetZoom = SCREEN_WIDTH / targetVirtualWidth
+                     # Use godViewZoom setting
+                     targetZoom = self.godViewZoom
                      self.zoom += (targetZoom - self.zoom) * 0.05
                      # Center of map
                      self.cameraX = MAP_WIDTH/2 - (SCREEN_WIDTH / self.zoom) / 2

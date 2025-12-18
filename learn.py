@@ -4,7 +4,7 @@ from game import GAME
 
 WIDTH = 1280
 HEIGHT = 720
-FPS = 60
+FPS = 180
 WINDOW_TITLE = "Slither AI Training - Spectator Mode"
 
 def main():
