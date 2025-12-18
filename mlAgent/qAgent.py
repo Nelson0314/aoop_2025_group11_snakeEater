@@ -1,4 +1,7 @@
 from mlAgent import config
+import random
+import os
+import pickle
 
 class QLearningAgent:
     def __init__(self, actions, learningRate=config.LEARNING_RATE, discountFactor=config.DISCOUNT_FACTOR, epsilon=config.EPSILON):
