@@ -1,12 +1,6 @@
-import pygame
-from snake import Snake, playerSnake, ComputerSnake
-from food import Food
-import random
-from settings import *
-import math
-from ml_agent.q_agent import QLearningAgent
-from ml_agent.utils import get_state
-from ml_agent import config
+from mlAgent.qAgent import QLearningAgent
+from mlAgent.utils import getState
+from mlAgent import config
 
 class GAME():
     def __init__(self, screen):
@@ -16,7 +10,7 @@ class GAME():
         self.cameraX = 0
         self.cameraY = 0
         self.font = pygame.font.SysFont(None, 18)
-        self.large_font = pygame.font.SysFont(None, 72) # 大字體用於標題
+        self.largeFont = pygame.font.SysFont(None, 72) # 大字體用於標題
         
         self.state = 'playing' # 'playing' or 'game_over'
         self.zoom = 1.0
@@ -24,7 +18,7 @@ class GAME():
         # Initialize RL Agent
         # Actions: 0=Straight, 1=Left, 2=Right
         self.agent = QLearningAgent(actions=[0, 1, 2])
-        self.agent.load_model()
+        self.agent.loadModel()
         
         self.setUp()
 
@@ -68,11 +62,11 @@ class GAME():
 
     def update(self):
         # Auto-save model periodically
-        if not hasattr(self, 'frame_count'):
-            self.frame_count = 0
-        self.frame_count += 1
-        if self.frame_count % config.MODEL_SAVE_INTERVAL == 0:
-            self.agent.save_model()
+        if not hasattr(self, 'frameCount'):
+            self.frameCount = 0
+        self.frameCount += 1
+        if self.frameCount % config.MODEL_SAVE_INTERVAL == 0:
+            self.agent.saveModel()
 
         if self.state != 'playing':
             return
@@ -82,11 +76,11 @@ class GAME():
                 snake.updateDirectionByMouse()
             elif isinstance(snake, ComputerSnake):
                 # RL: Observe State
-                snake.state_old = get_state(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
-                snake.score_old = snake.score
+                snake.stateOld = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
+                snake.scoreOld = snake.score
                 # RL: Choose Action
-                snake.action = self.agent.choose_action(snake.state_old)
-                snake.perform_action(snake.action)
+                snake.action = self.agent.chooseAction(snake.stateOld)
+                snake.performAction(snake.action)
             
             self.checkCollision(snake)
             snake.move()
@@ -113,22 +107,22 @@ class GAME():
 
         # RL: Learning Step (For surviving snakes)
         for snake in self.snakes:
-            if isinstance(snake, ComputerSnake) and hasattr(snake, 'state_old'):
+            if isinstance(snake, ComputerSnake) and hasattr(snake, 'stateOld'):
                 # Reward Logic
                 reward = config.REWARD_SURVIVAL # Survival reward
-                if snake.score > snake.score_old:
+                if snake.score > snake.scoreOld:
                     reward = config.REWARD_EAT_FOOD # Eating reward
                 
                 # Check for Kill Reward
-                if snake.has_killed:
+                if snake.hasKilled:
                     reward += config.REWARD_KILL
-                    snake.has_killed = False
+                    snake.hasKilled = False
 
                 # Observe New State
-                snake.state_new = get_state(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
+                snake.stateNew = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
                 
                 # Update Q-Table
-                self.agent.learn(snake.state_old, snake.action, reward, snake.state_new)
+                self.agent.learn(snake.stateOld, snake.action, reward, snake.stateNew)
 
         # 這裡的 cameraX, cameraY 要對應 "虛擬" 座標
         # 螢幕中心在虛擬空間中的位置 = 玩家頭部位置
@@ -226,12 +220,12 @@ class GAME():
             if killer:
                 
                 # RL: Death Penalty for victim
-                if isinstance(snake, ComputerSnake) and hasattr(snake, 'state_old'):
-                    self.agent.learn(snake.state_old, snake.action, config.REWARD_DEATH, snake.state_old)
+                if isinstance(snake, ComputerSnake) and hasattr(snake, 'stateOld'):
+                    self.agent.learn(snake.stateOld, snake.action, config.REWARD_DEATH, snake.stateOld)
                 
                 # RL: Kill Reward for killer
                 if killer and isinstance(killer, ComputerSnake):
-                    killer.has_killed = True # Flag to be picked up in the update loop
+                    killer.hasKilled = True # Flag to be picked up in the update loop
 
                 self.killSnake(snake)
                 self.snakes.pop(i)

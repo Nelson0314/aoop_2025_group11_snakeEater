@@ -101,26 +101,26 @@ class playerSnake(Snake):
 
         self.direction = pygame.Vector2(dirX, dirY)
 
-from ml_agent import config
+from mlAgent import config
 
 class ComputerSnake(Snake):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.angle = 0
-        self.has_killed = False
+        self.hasKilled = False
 
-    def perform_action(self, action):
+    def performAction(self, action):
         """
         Action values:
         0: Keep direction (Straight)
         1: Turn Left (e.g., -15 degrees)
         2: Turn Right (e.g., +15 degrees)
         """
-        turn_angle = config.TURN_ANGLE
+        turnAngle = config.TURN_ANGLE
         if action == 1:
-            self.angle -= turn_angle
+            self.angle -= turnAngle
         elif action == 2:
-            self.angle += turn_angle
+            self.angle += turnAngle
         
         # Normalize angle
         self.angle %= 360
@@ -130,7 +130,7 @@ class ComputerSnake(Snake):
         self.direction = pygame.Vector2(math.cos(rad), math.sin(rad))
 
     def updateDirection(self):
-        # With Q-learning, direction is updated via perform_action called from game loop
+        # With Q-learning, direction is updated via performAction called from game loop
         # So this default behavior is just ensuring the vector matches the angle if called
         rad = math.radians(self.angle)
         self.direction = pygame.Vector2(math.cos(rad), math.sin(rad))
