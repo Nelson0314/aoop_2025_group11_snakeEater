@@ -1,6 +1,8 @@
 import sys
+import os
 import pygame
 from game import GAME
+from mlAgent import config
 
 WIDTH = 1280
 HEIGHT = 720
@@ -8,6 +10,14 @@ FPS = 180
 WINDOW_TITLE = "Slither AI Training - Spectator Mode"
 
 def main():
+    # Remove existing model for fresh training
+    if os.path.exists(config.MODEL_FILE_NAME):
+        try:
+            os.remove(config.MODEL_FILE_NAME)
+            print(f"Deleted existing model: {config.MODEL_FILE_NAME}")
+        except OSError as e:
+            print(f"Error deleting model: {e}")
+
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption(WINDOW_TITLE)
@@ -43,7 +53,12 @@ def main():
         else:
             status = "God View (G to toggle)"
             
-        caption = f"{WINDOW_TITLE} | {status} | FPS: {int(clock.get_fps())}"
+        # Calculate training interval
+        current_interval = 0
+        if hasattr(game, 'frameCount'):
+            current_interval = game.frameCount // config.MODEL_SAVE_INTERVAL
+            
+        caption = f"{WINDOW_TITLE} | {status} | Interval: {current_interval} | FPS: {int(clock.get_fps())}"
         pygame.display.set_caption(caption)
 
         pygame.display.flip()
