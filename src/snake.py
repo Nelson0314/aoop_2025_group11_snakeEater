@@ -1,4 +1,5 @@
 import pygame
+import pygame.gfxdraw # Import gfxdraw
 import math
 import random
 from .settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, BOOST_SPEED, BOOST_COST, MIN_SCORE_TO_BOOST
@@ -36,19 +37,18 @@ class Snake():
 
     @property
     def length(self):
-        # Restore: Length = 10 + sqrt(score)
+        # Length = 10 + sqrt(score)
         return 10 + int(math.sqrt(self.score))
 
     @property
     def radius(self):
-        # Restore: Radius scales with length (formerly length * 1.5)
-        # Note: length is now smaller (sqrt-based), so 1.5 might be appropriate
+        # Radius scales with length
         return int(self.length * 1.5)
 
     @property
     def spacing(self):
         # Dynamic spacing to keep body connected as radius grows
-        return max(5, int(self.radius * 0.9))
+        return max(5, int(self.radius * 1.2))
         
     def set_skin(self, head_img, body_img):
         self.head_img = head_img
@@ -59,7 +59,6 @@ class Snake():
         if radius < 1: radius = 1
         
         # Draw Body (Reverse order so tail is below neck)
-        # Iterate from last element down to index 1
         for i in range(len(self.body) - 1, 0, -1):
             part = self.body[i]
             
@@ -69,12 +68,14 @@ class Snake():
             screenCenterY = int(screenY)
             
             if hasattr(self, 'body_img') and self.body_img:
-                scaled_size = int(radius * 2) # Diameter
+                scaled_size = int(radius * 2) 
                 scaled_img = pygame.transform.scale(self.body_img, (scaled_size, scaled_size))
                 rect = scaled_img.get_rect(center=(screenCenterX, screenCenterY))
                 screen.blit(scaled_img, rect)
             else:
-                 pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius)
+                 # Use gfxdraw for smooth edges (No outline)
+                 pygame.gfxdraw.filled_circle(screen, screenCenterX, screenCenterY, radius, self.color)
+                 pygame.gfxdraw.aacircle(screen, screenCenterX, screenCenterY, radius, self.color)
 
         # Draw Head
         head = self.body[0]
@@ -84,15 +85,15 @@ class Snake():
         screenCenterY = int(screenY)
         
         if hasattr(self, 'head_img') and self.head_img:
-             # Rotation
              angle = math.degrees(math.atan2(-self.direction.y, self.direction.x))
-             scaled_size = int(radius * 2) # Use same size as body (Radius * 2)
+             scaled_size = int(radius * 2)
              scaled_head = pygame.transform.scale(self.head_img, (scaled_size, scaled_size))
              rotated_head = pygame.transform.rotate(scaled_head, angle)
              rect = rotated_head.get_rect(center=(screenCenterX, screenCenterY))
              screen.blit(rotated_head, rect)
         else:
-             pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
+             pygame.gfxdraw.filled_circle(screen, screenCenterX, screenCenterY, radius, self.color)
+             pygame.gfxdraw.aacircle(screen, screenCenterX, screenCenterY, radius, self.color)
 
     def grow(self, amount):
         self.score += amount
