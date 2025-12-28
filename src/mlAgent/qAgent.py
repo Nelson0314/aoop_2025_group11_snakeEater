@@ -63,7 +63,20 @@ class QLearningAgent:
 
         try:
             with open(finalPath, "rb") as f:
-                self.qTable = pickle.load(f)
+                loaded_q_table = pickle.load(f)
+            
+            # Validate Action Size compatibility
+            # Extract unique actions from the loaded Q-table keys
+            loaded_actions = set(action for state, action in loaded_q_table.keys())
+            
+            # Compare with current agent's actions
+            if loaded_actions and (set(self.actions) != loaded_actions or len(self.actions) != len(loaded_actions)):
+                print(f"Model action set mismatch. Saved actions: {sorted(list(loaded_actions))}, Current actions: {sorted(self.actions)}. Starting fresh.")
+                self.qTable = {} # Reset to empty if mismatch
+                return
+            
+            self.qTable = loaded_q_table
             print(f"Model loaded from {finalPath}")
         except Exception as e:
              print(f"Error loading model: {e}")
+

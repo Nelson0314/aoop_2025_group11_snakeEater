@@ -28,8 +28,8 @@ class GAME():
         self.zoom = 1.0
 
         # RL Agent
-        # Actions: 0=Straight, 1=Left, 2=Right
-        self.agent = QLearningAgent(actions=[0, 1, 2])
+        # Actions: 0-2 (Normal), 3-5 (Boost)
+        self.agent = QLearningAgent(actions=[0, 1, 2, 3, 4, 5])
         if mode == 'play':
              # In play mode, we might want to load model but NOT save it
              # Or just load it to have smart enemies
@@ -514,26 +514,41 @@ class GAME():
             self.screen.blit(panel_surf, (10, 10))
             
             # Draw Borders
-            pygame.draw.rect(self.screen, (100, 200, 255), (10, 10, panel_width, panel_height), 2)
+            pygame.draw.rect(self.screen, (100, 200, 255), (10, 10, panel_width, panel_height + 100), 2) # Taller panel
 
             # Text Info
-            # 1. SCORE (Large)
-            score_text = self.largeFont.render(f"Score: {player.score}", True, (255, 215, 0)) # Gold
+            # 1. SCORE
+            score_text = self.largeFont.render(f"Score: {player.score}", True, (255, 215, 0))
             score_text = pygame.transform.scale(score_text, (int(score_text.get_width() * 0.6), int(score_text.get_height() * 0.6)))
             self.screen.blit(score_text, (25, 20))
 
-            # 2. Stats (Small)
+            # 2. Stats
             stats_color = (200, 200, 200)
-            p_head = player.head
             fps_val = int(self.clock.get_fps()) if self.clock else "N/A"
-            line2 = f"Pos: ({int(p_head.centerx)}, {int(p_head.centery)}) | Len: {int(player.length)}"
-            line3 = f"Zoom: {self.zoom:.2f} | FPS: {fps_val}"
-            
+            line2 = f"Zoom: {self.zoom:.2f} | FPS: {fps_val}"
             surf2 = self.font.render(line2, True, stats_color)
-            surf3 = self.font.render(line3, True, stats_color)
-
             self.screen.blit(surf2, (25, 60))
-            self.screen.blit(surf3, (25, 80))
+            
+            # 3. LEADERBOARD (Top 5)
+            # Sort snakes by score
+            sorted_snakes = sorted(self.snakes, key=lambda s: s.score, reverse=True)[:5]
+            
+            self.screen.blit(self.font.render("--- Leaderboard ---", True, WHITE), (25, 85))
+            
+            y_offset = 105
+            for idx, s in enumerate(sorted_snakes):
+                color = s.color
+                name = "Player" if isinstance(s, playerSnake) else f"Bot {id(s) % 1000}"
+                text = f"{idx+1}. {name}: {int(s.score)}"
+                
+                # Highlight if it's the current player/spectator
+                if s == player:
+                    color = (255, 215, 0) # Gold
+                    text = f"> {text}"
+                    
+                surf = self.font.render(text, True, color)
+                self.screen.blit(surf, (25, y_offset))
+                y_offset += 15
 
         if self.state == 'game_over':
             self.drawGameOver()

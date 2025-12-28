@@ -21,6 +21,11 @@ FOOD_GROWTH = {
     'large': 3
 }
 
+# 3. 加速設定 (Boost Settings)
+BOOST_SPEED = 12         # Base speed 7 vs Boost speed 12
+BOOST_COST = 0.5         # Score deduction per frame
+MIN_SCORE_TO_BOOST = 10  # Minimum length/score to enable boost
+
 # 3. 視覺半徑 (畫在螢幕上的大小)
 FOOD_RADIUS = {
     'small': 11,

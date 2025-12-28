@@ -1,6 +1,6 @@
 import pygame
 import math
-from .settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from .settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, BOOST_SPEED, BOOST_COST, MIN_SCORE_TO_BOOST
 class Snake():
     def __init__(self, x, y, color):
         self.x = x
@@ -9,31 +9,27 @@ class Snake():
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
         self.score = 0
         self.direction = pygame.Vector2(1, 0)
-        self.speed = 7
-        # self.spacing = 15 (Removed, now a property)
+        self.base_speed = 7
+        self.speed = self.base_speed
+        self.isBoosting = False
         
         self.body = []
-        for i in range(self.length):
-            # 初始時讓身體往下方延伸，避免全部疊在一起
-            spawnX = x 
-            spawnY = y + i * self.spacing
-            self.body.append(pygame.Rect(spawnX, spawnY, TILE_SIZE, TILE_SIZE))
-        self.head = self.body[0]
-
-    @property
-    def length(self):
-        # 蛇的長度改成 10 + sqrt(score)
-        return 10 + int(math.sqrt(self.score))
+        # Initialize body parts
+        for i in range(10): 
+             self.body.append(pygame.Rect(x - i * 5, y, TILE_SIZE, TILE_SIZE))
+        
+        self.length = 10
+        self.exact_length = float(self.length) # Float for smooth decay
 
     @property
     def radius(self):
-        # 根據長度決定半徑: radius = length * 1.5
-        return self.length * 1.5
+        # Dynamic radius based on length
+        return int(TILE_SIZE/2 + self.length * 0.02) 
 
     @property
     def spacing(self):
-        # body每一節的間距也要動態調整成 radius
-        return self.radius
+        # Dynamic spacing to keep body connected as radius grows
+        return max(5, int(self.radius * 0.8))
 
     def set_skin(self, head_img, body_img):
         self.head_img = head_img
@@ -74,8 +70,9 @@ class Snake():
         else:
              pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
 
-    def grow(self, amount=1): 
-        # 吃食物增加分數
+    def grow(self, amount):
+        self.length += amount
+        self.exact_length += amount # Keep sync
         self.score += amount
 
     def move(self):
@@ -119,42 +116,64 @@ class playerSnake(Snake):
         super().__init__(x, y, color)
 
     def updateDirectionByMouse(self):
-        mouseX, mouseY = pygame.mouse.get_pos()
-
-        dirX = mouseX - SCREEN_WIDTH / 2
-        dirY = mouseY - SCREEN_HEIGHT / 2
-        length = (dirX ** 2 + dirY ** 2) ** 0.5
-        if length > 0:
-            dirX = dirX / length
-            dirY = dirY / length
-
-        self.direction = pygame.Vector2(dirX, dirY)
+        mx, my = pygame.mouse.get_pos()
+        dx = mx - SCREEN_WIDTH / 2
+        dy = my - SCREEN_HEIGHT / 2
+        
+        # Create vector
+        vec = pygame.Vector2(dx, dy)
+        if vec.length() > 0:
+            vec = vec.normalize()
+            self.direction = vec
+        
+        # Check Boost (Left Click)
+        if pygame.mouse.get_pressed()[0]:
+            self.isBoosting = True
+        else:
+            self.isBoosting = False
 
 from .mlAgent import config
 
 class ComputerSnake(Snake):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
-        self.angle = 0
+        self.angle = random.uniform(0, 360)
+        self.turn_speed = 15 # Degrees per frame
+        
+        # State tracking for RL
+        self.stateOld = None
+        self.action = 0
         self.hasKilled = False
 
     def performAction(self, action):
         """
-        Action values:
-        0: Keep direction (Straight)
-        1: Turn Left (e.g., -15 degrees)
-        2: Turn Right (e.g., +15 degrees)
+        Action Space:
+        0: Straight
+        1: Left
+        2: Right
+        3: Boost + Straight
+        4: Boost + Left
+        5: Boost + Right
         """
-        turnAngle = config.TURN_ANGLE
-        if action == 1:
-            self.angle -= turnAngle
-        elif action == 2:
-            self.angle += turnAngle
-        
-        # Normalize angle
-        self.angle %= 360
+        # Determine Boost
+        if action >= 3:
+            self.isBoosting = True
+            move_action = action - 3
+        else:
+            self.isBoosting = False
+            move_action = action
 
-        # Update direction vector
+        # 0: Keep current direction
+        if move_action == 0:
+            pass 
+        # 1: Turn Left
+        elif move_action == 1:
+            self.angle -= self.turn_speed
+        # 2: Turn Right
+        elif move_action == 2:
+            self.angle += self.turn_speed
+            
+        # Update vector from angle
         rad = math.radians(self.angle)
         self.direction = pygame.Vector2(math.cos(rad), math.sin(rad))
 
