@@ -1,5 +1,5 @@
-MAP_WIDTH = 10000
-MAP_HEIGHT = 10000
+MAP_WIDTH = 7000
+MAP_HEIGHT = 7000
 TILE_SIZE = 20
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -9,9 +9,9 @@ WHITE = (255, 255, 255)
 GRAY = (100, 100, 100)
 # 1. 數量限制 (地圖上同時存在的數量)
 FOOD_COUNTS = {
-    'small': 700,   # 小食物由 200 個
-    'medium': 250,   # 中食物由 50 個
-    'large': 100     # 大食物由 10 個
+    'small': 500,   # Reduced from 700
+    'medium': 150,  # Reduced from 250
+    'large': 50     # Reduced from 100
 }
 
 # 2. 增加長度 (吃到後蛇變長幾格)
