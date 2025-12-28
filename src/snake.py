@@ -8,14 +8,11 @@ class Snake():
         self.y = y
         self.color = color
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
-        self.score = 0
+        self.score = 0.0 # Float for boost decay
         self.direction = pygame.Vector2(1, 0)
         self.base_speed = 7
         self.speed = self.base_speed
         self.isBoosting = False
-        
-        self.length = 10
-        self.exact_length = float(self.length)
         
         self.body = []
         self.trace = [] # History of head positions [(x, y), ...]
@@ -29,7 +26,7 @@ class Snake():
              self.trace.append((tx, ty))
         
         # Initialize body parts along trace
-        for i in range(10):
+        for i in range(self.length):
              target_idx = int(i * current_spacing)
              if target_idx < len(self.trace):
                  pos = self.trace[target_idx]
@@ -38,9 +35,15 @@ class Snake():
                  self.body.append(pygame.Rect(x, y, TILE_SIZE, TILE_SIZE))
 
     @property
+    def length(self):
+        # Restore: Length = 10 + sqrt(score)
+        return 10 + int(math.sqrt(self.score))
+
+    @property
     def radius(self):
-        # Dynamic radius based on length
-        return int(TILE_SIZE/2 + self.length * 0.02) 
+        # Restore: Radius scales with length (formerly length * 1.5)
+        # Note: length is now smaller (sqrt-based), so 1.5 might be appropriate
+        return int(self.length * 1.5)
 
     @property
     def spacing(self):
@@ -66,7 +69,7 @@ class Snake():
             screenCenterY = int(screenY)
             
             if hasattr(self, 'body_img') and self.body_img:
-                scaled_size = int(TILE_SIZE * zoom)
+                scaled_size = int(radius * 2) # Diameter
                 scaled_img = pygame.transform.scale(self.body_img, (scaled_size, scaled_size))
                 rect = scaled_img.get_rect(center=(screenCenterX, screenCenterY))
                 screen.blit(scaled_img, rect)
@@ -83,7 +86,7 @@ class Snake():
         if hasattr(self, 'head_img') and self.head_img:
              # Rotation
              angle = math.degrees(math.atan2(-self.direction.y, self.direction.x)) - 90
-             scaled_size = int(TILE_SIZE * zoom) # Same size as body
+             scaled_size = int(radius * 2) # Use same size as body (Radius * 2)
              scaled_head = pygame.transform.scale(self.head_img, (scaled_size, scaled_size))
              rotated_head = pygame.transform.rotate(scaled_head, angle)
              rect = rotated_head.get_rect(center=(screenCenterX, screenCenterY))
@@ -92,17 +95,13 @@ class Snake():
              pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
 
     def grow(self, amount):
-        self.length += amount
-        self.exact_length += amount 
         self.score += amount
 
     def move(self):
         # 1. Boost Logic
         if self.isBoosting and self.score > MIN_SCORE_TO_BOOST:
             self.speed = BOOST_SPEED
-            self.exact_length -= BOOST_COST
-            self.length = int(self.exact_length)
-            self.score = self.length
+            self.score -= BOOST_COST # Deduct score directly
         else:
              self.speed = self.base_speed
              if self.score <= MIN_SCORE_TO_BOOST:
