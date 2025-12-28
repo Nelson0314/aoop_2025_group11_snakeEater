@@ -13,6 +13,7 @@ REWARD_EAT_FOOD = 50      # Reward for eating food
 REWARD_DEATH = -200      # Penalty for hitting another snake
 REWARD_WALL = -300       # Penalty for hitting the wall
 REWARD_KILL = 0        # Reward for causing another snake to die
+REWARD_BOOST_PENALTY = -0.05 # Penalty for using boost (score decrease)
 
 # Training settings
 MODEL_SAVE_INTERVAL = 600 # Save the Q-table every N frames

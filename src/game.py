@@ -260,6 +260,8 @@ class GAME():
                     reward = config.REWARD_SURVIVAL 
                     if snake.score > snake.scoreOld:
                         reward = config.REWARD_EAT_FOOD
+                    elif snake.score < snake.scoreOld:
+                        reward += config.REWARD_BOOST_PENALTY
                     
                     if snake.hasKilled:
                         reward += config.REWARD_KILL
