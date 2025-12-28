@@ -29,6 +29,39 @@ The project is organized into a modular structure to ensure maintainability and 
 *   **`main.py`**: Entry point for the standard game mode (Human vs AI).
 *   **`learn.py`**: Entry point for the training/spectator mode (AI vs AI).
 
+## Class Structure
+
+```mermaid
+classDiagram
+    class GAME {
+        +snakes: List~Snake~
+        +food: List~Food~
+        +agent: QLearningAgent
+        +update()
+        +draw()
+    }
+    class Snake {
+        +body: List
+        +length: int
+        +move()
+    }
+    class PlayerSnake {
+        +updateDirectionByMouse()
+    }
+    class ComputerSnake {
+        +performAction(action)
+    }
+    class QLearningAgent {
+        +qTable: dict
+        +learn()
+    }
+    GAME *-- Snake : has
+    GAME *-- Food : has
+    GAME --> QLearningAgent : uses
+    Snake <|-- PlayerSnake : inherits
+    Snake <|-- ComputerSnake : inherits
+```
+
 ## Installation
 
 1.  Clone the repository:
