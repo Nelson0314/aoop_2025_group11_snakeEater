@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 # Configuration
-MAIN_SCRIPT = "learn.py"  
+MAIN_SCRIPT = "main.py"  
 EXE_NAME = "SnakeEater_AI"
 ICON_PATH = "icon.ico" # Optional, if exists
 DIST_DIR = "dist"
