@@ -83,7 +83,7 @@ class Snake():
         if hasattr(self, 'head_img') and self.head_img:
              # Rotation
              angle = math.degrees(math.atan2(-self.direction.y, self.direction.x)) - 90
-             scaled_size = int(TILE_SIZE * 1.5 * zoom) # Head slightly larger
+             scaled_size = int(TILE_SIZE * zoom) # Same size as body
              scaled_head = pygame.transform.scale(self.head_img, (scaled_size, scaled_size))
              rotated_head = pygame.transform.rotate(scaled_head, angle)
              rect = rotated_head.get_rect(center=(screenCenterX, screenCenterY))
