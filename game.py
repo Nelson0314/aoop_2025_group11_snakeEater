@@ -72,6 +72,17 @@ class GAME():
         else:
             print(f"No BGM found at {bgm_path}")
 
+        # Sound Effects
+        eat_path = os.path.join("assets", "eat.mp3")
+        self.eat_sound = None
+        if os.path.exists(eat_path):
+            try:
+                self.eat_sound = pygame.mixer.Sound(eat_path)
+                self.eat_sound.set_volume(0.5)
+                print(f"Loaded SFX: {eat_path}")
+            except Exception as e:
+                print(f"Error loading SFX: {e}")
+
     def setUp(self):
         # Create Player ONLY in 'play' mode
         if self.mode == 'play':
@@ -235,6 +246,14 @@ class GAME():
                         reward += config.REWARD_KILL
                         snake.hasKilled = False
 
+                    # Wall Penalty Check
+                    # Since move() clamps position, check if at boundary
+                    head = snake.head
+                    r = snake.radius
+                    if head.centerx <= r or head.centerx >= MAP_WIDTH - r or \
+                       head.centery <= r or head.centery >= MAP_HEIGHT - r:
+                        reward += config.REWARD_WALL # Apply heavy penalty for hugging wall
+
                     snake.stateNew = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
                     self.agent.learn(snake.stateOld, snake.action, reward, snake.stateNew)
 
@@ -254,6 +273,15 @@ class GAME():
             radii_sum = snake.radius + food.radius
             
             if dist_sq < radii_sum ** 2:
+                # Play Sound (Only for Player or Spectated Snake)
+                should_play = False
+                if self.mode == 'play' and isinstance(snake, playerSnake):
+                    should_play = True
+                elif self.mode == 'learn' and snake == self.spectatorSnake:
+                    should_play = True
+                
+                if should_play and self.eat_sound:
+                    self.eat_sound.play()
                 
                 # 1. 蛇變長
                 snake.grow(food.growthValue)
