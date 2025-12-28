@@ -1,47 +1,71 @@
-# 貪食蛇大逃殺
+# SnakeEater AI
 
+A comprehensive update to the classic Snake game, featuring a reinforcement learning-based AI agent, polished UI, and a structured codebase. This project demonstrates the integration of modern game development practices with machine learning using Python and Pygame.
 
-> 一款使用 Python 與 Pygame 打造的對戰型貪吃蛇類型遊戲。本專案以物件導向程式設計為核心，計畫配合機器學習實現電腦對手的行為模式。
+## Project Overview
 
----
+SnakeEater AI transforms the traditional arcade game into a battle royale environment. The project showcases:
+*   **Machine Learning**: An intelligent agent trained using Q-Learning to survive and compete.
+*   **Game Development**: A robust game engine built on Pygame with optimized rendering and collision detection.
+*   **UI/UX**: Modern user interface with dynamic text, scoreboards, and smooth visual effects.
 
-## 🌟 核心功能 (Core Features)
+## Features
 
-* **策略性擊殺機制**: 遊戲的核心玩法。當任何一條蛇的頭部撞擊到另一條蛇的身體時，前者將被擊殺。
-* **死亡轉化**: 被擊殺的蛇會分解成大量的食物，為戰場提供豐富的資源獎勵。
-* **無邊界地圖**: 蛇碰到地圖邊界時不會死亡，而是會沿著邊緣滑行，讓戰術應用更加靈活。
-* **身體穿越**: 蛇頭可以自由穿越**自己的身體**，讓您可以做出意想不到的包圍與反殺操作。
-* **物件導向架構**: 採用清晰的物件導向設計，為未來的 AI 開發與功能擴充打下堅實基礎。
+*   **Intelligent Adversaries**: Computer snakes trained to hunt food and avoid collisions.
+*   **Spectator Mode**: Watch the AI learn and evolve in real-time (`learn.py`).
+*   **Visual Polish**: Custom textures for snakes and backgrounds, particle effects, and polished UI elements.
+*   **Audio Integration**: Background music and sound effects for immersive gameplay.
+*   **Optimized Performance**: Implementation of view culling and efficient math for high frame rates with many entities.
 
-## 🏛️ 物件導向結構 (OOP Design)
+## Architecture
 
-本專案的核心是物件導向的設計，主要包含以下幾個類別：
+The project is organized into a modular structure to ensure maintainability and scalability:
 
-* `food`: 代表地圖上的食物物件。
-* `map`: 管理遊戲世界的邊界與整體狀態。
-* `snake` (基礎類別): 定義了所有蛇共有的屬性（身體、長度）與方法（移動、成長、繪製）。
-* `playerSnake` (繼承 `snake`): 處理玩家輸入的蛇類別。
-* `computerSnake` (繼承 `snake`): 為 AI 控制的蛇類別
+*   **`src/`**: Core source code.
+    *   **`game.py`**: Main game loop, rendering logic, and state management.
+    *   **`snake.py`**: Snake entity logic, including movement and AI behavior.
+    *   **`mlAgent/`**: Q-Learning implementation (`qAgent.py`, `config.py`).
+*   **`scripts/`**: Utility scripts for building executables and generating assets.
+*   **`assets/`**: Game resources including images and audio files.
+*   **`main.py`**: Entry point for the standard game mode (Human vs AI).
+*   **`learn.py`**: Entry point for the training/spectator mode (AI vs AI).
 
-## 🛠️ 技術棧 (Tech Stack)
+## Installation
 
-* **主要語言**: Python 3
-* **遊戲開發**: Pygame
-* **數值運算**: NumPy
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/Nelson0314/aoop_2025_group11_snakeEater.git
+    cd aoop_2025_group11_snakeEater
+    ```
 
-## 🚀 如何安裝與執行 (Installation & Usage)
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
+## Usage
+
+### Play Mode
+To play the game against AI opponents:
 ```bash
-# 1. 取得專案並進入目錄
-git clone [https://github.com/Nelson0314/aoop_2025_group11_snakeEater.git](https://github.com/Nelson0314/aoop_2025_group11_snakeEater.git)
-cd aoop_2025_group11_snakeEater
+python main.py
+```
+*   **Controls**: Mouse to steer your snake.
+*   **Goal**: Eat food to grow, avoid walls and other snakes. Cut off opponents to kill them.
 
-# 2. (建議) 建立並啟用虛擬環境
-# Windows: python -m venv venv && .\venv\Scripts\activate
-# macOS/Linux: python3 -m venv venv && source venv/bin/activate
+### Spectator / Training Mode
+To watch the AI training process:
+```bash
+python learn.py
+```
+*   **Controls**:
+    *   `A` / `D`: Switch between different AI snakes to spectate.
+    *   `G`: Toggle "God View" to see the entire map.
 
-# 3. 安裝所有必要的套件
-pip install -r requirements.txt
+## Credits
 
-# 4. 執行遊戲
-python src/main.py
+**Group 11**
+*   Nelson
+*   [Other Team Members]
+
+Developed for AOOP 2025.
