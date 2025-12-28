@@ -227,6 +227,7 @@ class ComputerSnake(Snake):
         
         # State tracking for RL
         self.stateOld = None
+        self.scoreOld = 0.0 # Track previous score for reward
         self.action = 0
         self.hasKilled = False
 
