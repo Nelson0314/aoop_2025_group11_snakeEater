@@ -16,9 +16,13 @@ REWARD_KILL = 0        # Reward for causing another snake to die
 REWARD_BOOST_PENALTY = -0.05 # Penalty for using boost (score decrease)
 
 # Training settings
+# Training settings
 MODEL_SAVE_INTERVAL = 600 # Save the Q-table every N frames
-MODEL_SAVE_FILE = os.path.join("mlAgent", "qTable.pkl")
-MODEL_LOAD_FILE = os.path.join("mlAgent", "qTable_trained.pkl")
+
+# Get the directory where this config.py file is located (src/mlAgent)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_SAVE_FILE = os.path.join(BASE_DIR, "qTable.pkl")
+MODEL_LOAD_FILE = os.path.join(BASE_DIR, "qTable_trained.pkl")
 
 # Action settings
 TURN_ANGLE = 15           # Degrees to turn left or right per action
