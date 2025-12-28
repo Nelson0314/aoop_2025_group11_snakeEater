@@ -52,7 +52,7 @@ class GAME():
 
         # Create Computer Snakes
         # In learn mode, we might want MORE snakes to speed up training?
-        count = 50 if self.mode == 'learn' else 10 # More snakes in learn mode
+        count = 50 if self.mode == 'learn' else 35 # More snakes in learn mode
         
         for _ in range(count):
             cx = random.randint(100, MAP_WIDTH - 100)
@@ -393,7 +393,7 @@ class GAME():
         self.screen.blit(overlay, (0, 0))
         
         # Game Over 文字
-        titleText = self.large_font.render("GAME OVER", True, (255, 50, 50))
+        titleText = self.largeFont.render("GAME OVER", True, (255, 50, 50))
         titleRect = titleText.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50))
         self.screen.blit(titleText, titleRect)
         
