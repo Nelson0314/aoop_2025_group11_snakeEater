@@ -21,6 +21,11 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption(WINDOW_TITLE)
+    
+    # Start Screen
+    import ui
+    ui.show_start_screen(screen, title="SLITHER AI", subtitle="Spectator Mode - Press ENTER")
+
     clock = pygame.time.Clock()
 
     # Initialize Game in 'learn' mode

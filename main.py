@@ -11,6 +11,11 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption(WINDOW_TITLE)
+    
+    # Start Screen
+    import ui
+    ui.show_start_screen(screen, title="SLITHER AI", subtitle="Press ENTER to Play")
+
     clock = pygame.time.Clock()
 
     game = GAME(screen, mode='play')
