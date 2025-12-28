@@ -9,6 +9,34 @@ SnakeEater AI features a battle royale environment. The project showcases:
 *   **Game Development**: A robust game engine built on Pygame with optimized rendering and collision detection.
 *   **UI/UX**: Modern user interface with dynamic text, scoreboards, and smooth visual effects.
 
+## Machine Learning Model (Q-Learning)
+
+The AI agent uses **Q-Learning**, a reinforcement learning algorithm, to make decisions. The process follows this cycle:
+
+```mermaid
+graph TD
+    %% Styling
+    classDef state fill:#e2f0d9,stroke:#a9d08e,color:#333;
+    classDef action fill:#fff2cc,stroke:#ffd966,color:#333;
+    classDef reward fill:#deebf7,stroke:#9bc2e6,color:#333;
+    classDef update fill:#e1d5e7,stroke:#b4a7d6,color:#333;
+
+    A([Start]) --> B[Observe State]
+    B --> C{Choose Action}
+    C -- Exploration --> D[Random Action]
+    C -- Exploitation --> E[Best Q-Value Action]
+    D --> F[Execute Action]
+    E --> F
+    F --> G[Get Reward / Penalty]
+    G --> H[Update Q-Table]
+    H --> B
+
+    class B state
+    class C,D,E,F action
+    class G reward
+    class H update
+```
+
 ## Features
 
 *   **Intelligent Adversaries**: Computer snakes trained to hunt food and avoid collisions.
