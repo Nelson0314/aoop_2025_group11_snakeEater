@@ -9,7 +9,7 @@ class Snake():
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
         self.score = 0
         self.direction = pygame.Vector2(1, 0)
-        self.speed = 5
+        self.speed = 7
         # self.spacing = 15 (Removed, now a property)
         
         self.body = []
