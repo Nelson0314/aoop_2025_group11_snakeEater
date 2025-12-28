@@ -35,15 +35,44 @@ class Snake():
         # body每一節的間距也要動態調整成 radius
         return self.radius
 
+    def set_skin(self, head_img, body_img):
+        self.head_img = head_img
+        self.body_img = body_img
+
     def draw(self, screen, cameraX, cameraY, zoom):
-        for tile in self.body:
-            screenCenterX = (tile.centerx - cameraX) * zoom
-            screenCenterY = (tile.centery - cameraY) * zoom
+        radius = int(self.radius * zoom)
+        if radius < 1: radius = 1
+        diameter = radius * 2
 
-            radius = int(self.radius * zoom)
-            if radius < 1: radius = 1
-
-            pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
+        # Draw Body
+        if hasattr(self, 'body_img') and self.body_img:
+            # Scale body image
+            scaled_body = pygame.transform.scale(self.body_img, (diameter, diameter))
+            for tile in self.body:
+                screenCenterX = (tile.centerx - cameraX) * zoom
+                screenCenterY = (tile.centery - cameraY) * zoom
+                # Blit centered
+                screen.blit(scaled_body, (screenCenterX - radius, screenCenterY - radius))
+        else:
+            # Fallback
+            for tile in self.body:
+                screenCenterX = (tile.centerx - cameraX) * zoom
+                screenCenterY = (tile.centery - cameraY) * zoom
+                pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
+        
+        # Draw Head
+        screenCenterX = (self.head.centerx - cameraX) * zoom
+        screenCenterY = (self.head.centery - cameraY) * zoom
+        
+        if hasattr(self, 'head_img') and self.head_img:
+            # Rotate and scale head
+            angle = math.degrees(math.atan2(-self.direction.y, self.direction.x))
+            scaled_head = pygame.transform.scale(self.head_img, (diameter, diameter))
+            rotated_head = pygame.transform.rotate(scaled_head, angle)
+            rect = rotated_head.get_rect(center=(screenCenterX, screenCenterY))
+            screen.blit(rotated_head, rect)
+        else:
+             pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
 
     def grow(self, amount=1): 
         # 吃食物增加分數

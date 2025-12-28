@@ -40,7 +40,22 @@ class GAME():
         self.cameraMode = 'follow' # 'follow' or 'god'
         self.godViewZoom = 0.1 # Zoom level for God View (Seeing approx 1/3 of map)
 
+        self.loadAssets()
         self.setUp()
+
+    def loadAssets(self):
+        try:
+            self.assets = {
+                'skins': [
+                    (pygame.image.load("assets/skin_green_head.png"), pygame.image.load("assets/skin_green_body.png")),
+                    (pygame.image.load("assets/skin_blue_head.png"), pygame.image.load("assets/skin_blue_body.png")),
+                    (pygame.image.load("assets/skin_red_head.png"), pygame.image.load("assets/skin_red_body.png"))
+                ],
+                'grid': pygame.image.load("assets/grid_bg.png")
+            }
+        except FileNotFoundError:
+            print("Assets not found. Please run generate_assets.py")
+            self.assets = {'skins': [], 'grid': None}
 
     def setUp(self):
         # Create Player ONLY in 'play' mode
@@ -48,16 +63,25 @@ class GAME():
             xCentre = SCREEN_WIDTH / 2
             yCentre = SCREEN_HEIGHT / 2
             player = playerSnake(xCentre, yCentre, WHITE)
+            if self.assets['skins']:
+                # Player gets Skin 0 (Green)
+                h, b = self.assets['skins'][0]
+                player.set_skin(h, b)
             self.snakes.append(player)
 
         # Create Computer Snakes
         # In learn mode, we might want MORE snakes to speed up training?
         count = 50 if self.mode == 'learn' else 35 # More snakes in learn mode
         
-        for _ in range(count):
+        for i in range(count):
             cx = random.randint(100, MAP_WIDTH - 100)
             cy = random.randint(100, MAP_HEIGHT - 100)
             computer = ComputerSnake(cx, cy, (255, 0, 0))
+            if self.assets['skins']:
+                # Random skin 1 or 2 for enemies (or 0 too)
+                skin_idx = random.randint(0, 2)
+                h, b = self.assets['skins'][skin_idx]
+                computer.set_skin(h, b)
             self.snakes.append(computer)
 
         for foodType, count in FOOD_COUNTS.items():
@@ -265,16 +289,18 @@ class GAME():
                     # 避免浮點數縫隙，稍微加一點點或者用 ceil? 通常不用，pygame.draw.rect 接受 float 會取整
                     # 為了效能和畫面正確性，稍微重疊一點點無所謂，或是直接畫線
                     
-                    # 決定顏色
-                    if (row + col) % 2 == 0:
-                        color = BLACK
+                    if self.assets['grid']:
+                         # Scale grid tile to match zoom
+                         scaled_grid = pygame.transform.scale(self.assets['grid'], (int(gridSizeScreen)+1, int(gridSizeScreen)+1))
+                         surface.blit(scaled_grid, (tileScreenX, tileScreenY))
                     else:
-                        color = GRAY
-                        
-                    # 畫出這個網格矩形
-                    # 為了避免浮點數導致的細微縫隙 (Moire pattern 或 gap)，可以使用 ceil 或者 +1
-                    pygame.draw.rect(surface, color, 
-                                     (tileScreenX, tileScreenY, gridSizeScreen + 1, gridSizeScreen + 1))
+                        # Fallback to lines
+                        if (row + col) % 2 == 0:
+                            color = BLACK
+                        else:
+                            color = GRAY
+                        pygame.draw.rect(surface, color, 
+                                         (tileScreenX, tileScreenY, gridSizeScreen + 1, gridSizeScreen + 1))
 
     def checkDeaths(self):
         # 檢查每一條蛇是否撞到別條蛇
