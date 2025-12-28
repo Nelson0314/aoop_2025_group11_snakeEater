@@ -101,7 +101,9 @@ classDiagram
 
     %% Applying Styles
     class GAME core
-    class Snake,PlayerSnake,ComputerSnake entity
+    class Snake entity
+    class PlayerSnake entity
+    class ComputerSnake entity
     class Food item
     class QLearningAgent ai
 ```
