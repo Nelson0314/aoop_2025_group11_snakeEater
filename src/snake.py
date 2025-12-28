@@ -48,7 +48,7 @@ class Snake():
     @property
     def spacing(self):
         # Dynamic spacing to keep body connected as radius grows
-        return max(5, int(self.radius * 0.4))
+        return max(5, int(self.radius * 1.2))
         
     def set_skin(self, head_img, body_img):
         self.head_img = head_img
