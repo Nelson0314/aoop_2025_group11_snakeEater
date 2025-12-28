@@ -1,8 +1,8 @@
 import sys
 import os
 import pygame
-from game import GAME
-from mlAgent import config
+from src.game import GAME
+from src.mlAgent import config
 
 WIDTH = 1280
 HEIGHT = 720
@@ -23,7 +23,7 @@ def main():
     pygame.display.set_caption(WINDOW_TITLE)
     
     # Start Screen
-    import ui
+    from src import ui
     ui.show_start_screen(screen, title="SLITHER AI", subtitle="Spectator Mode - Press ENTER")
 
     clock = pygame.time.Clock()

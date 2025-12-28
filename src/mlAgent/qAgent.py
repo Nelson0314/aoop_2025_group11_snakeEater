@@ -1,4 +1,4 @@
-from mlAgent import config
+from . import config
 import random
 import os
 import pickle

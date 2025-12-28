@@ -1,7 +1,7 @@
 import pygame
 import sys
 import math
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK
+from .settings import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BLACK
 
 def show_start_screen(screen, title="SLITHER AI", subtitle="Press ENTER to Start"):
     """

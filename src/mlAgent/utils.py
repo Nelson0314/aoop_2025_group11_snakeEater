@@ -1,6 +1,7 @@
 import math
 import pygame
-from settings import TILE_SIZE
+from . import config
+from ..settings import TILE_SIZE
 
 def getState(snake, snakes, foods, mapWidth, mapHeight):
     """

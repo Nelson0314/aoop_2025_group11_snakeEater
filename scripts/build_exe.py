@@ -4,11 +4,11 @@ import subprocess
 import sys
 
 # Configuration
-MAIN_SCRIPT = "main.py"  
+MAIN_SCRIPT = "../main.py"  
 EXE_NAME = "SnakeEater_AI"
 ICON_PATH = "icon.ico" # Optional, if exists
-DIST_DIR = "dist"
-BUILD_DIR = "build"
+DIST_DIR = "../dist"
+BUILD_DIR = "../build"
 
 def print_step(msg):
     print(f"\n{'='*50}\n{msg}\n{'='*50}")

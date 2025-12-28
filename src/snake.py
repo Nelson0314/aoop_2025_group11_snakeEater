@@ -1,6 +1,6 @@
 import pygame
 import math
-from settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from .settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 class Snake():
     def __init__(self, x, y, color):
         self.x = x
@@ -130,7 +130,7 @@ class playerSnake(Snake):
 
         self.direction = pygame.Vector2(dirX, dirY)
 
-from mlAgent import config
+from .mlAgent import config
 
 class ComputerSnake(Snake):
     def __init__(self, x, y, color):

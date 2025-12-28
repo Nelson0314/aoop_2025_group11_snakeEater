@@ -1,13 +1,13 @@
-from mlAgent.qAgent import QLearningAgent
-from mlAgent.utils import getState
-from mlAgent import config
+from .mlAgent.qAgent import QLearningAgent
+from .mlAgent.utils import getState
+from .mlAgent import config
 import pygame
 import random
 import os
 import sys
-from settings import *
-from snake import playerSnake, ComputerSnake
-from food import Food
+from .settings import *
+from .snake import playerSnake, ComputerSnake
+from .food import Food
 import math
 
 class GAME():

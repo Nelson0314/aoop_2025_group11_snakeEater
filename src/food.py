@@ -1,5 +1,5 @@
 import pygame
-from settings import FOOD_GROWTH, FOOD_RADIUS, FOOD_COLORS
+from .settings import FOOD_GROWTH, FOOD_RADIUS, FOOD_COLORS
 
 class Food:
     def __init__(self, x, y, foodType):
