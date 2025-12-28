@@ -229,12 +229,16 @@ class GAME():
             
             # 計算蛇頭跟食物的距離
             dx = snake.head.centerx - food.x
+            # 計算蛇頭跟食物的距離 (Squared Distance Optimization)
+            dx = snake.head.centerx - food.x
             dy = snake.head.centery - food.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
+            dist_sq = dx ** 2 + dy ** 2
             
             # 判斷標準：距離 < (蛇頭半徑 + 食物半徑)
             # 使用動態半徑 snake.radius
-            if distance < snake.radius + food.radius:
+            radii_sum = snake.radius + food.radius
+            
+            if dist_sq < radii_sum ** 2:
                 
                 # 1. 蛇變長
                 snake.grow(food.growthValue)
@@ -359,12 +363,16 @@ class GAME():
                 continue
             
             # 遍歷對方的身體
+            # Optimization: Quick bounding box check for the whole snake first?
+            # Or just squared distance
+            
             for bodyPart in otherSnake.body:
                 dx = headX - bodyPart.centerx
                 dy = headY - bodyPart.centery
-                dist = math.sqrt(dx**2 + dy**2)
+                dist_sq = dx**2 + dy**2
                 
-                if dist < snake.radius + otherSnake.radius:
+                check_radius = snake.radius + otherSnake.radius
+                if dist_sq < check_radius**2:
                     return otherSnake # Killed by otherSnake
         
         return None # Alive
@@ -398,13 +406,34 @@ class GAME():
         # 3. 畫網格 (傳入 zoom)
         self.drawGrid(self.screen, self.zoom)
         
-        # 4. 畫食物
+        # 4. 畫食物 (Visual Culling)
+        # Calculate visible world bounds
+        visible_pad = 50 # padding to avoid popping
+        view_min_x = self.cameraX - visible_pad
+        view_min_y = self.cameraY - visible_pad
+        view_max_x = self.cameraX + (SCREEN_WIDTH / self.zoom) + visible_pad
+        view_max_y = self.cameraY + (SCREEN_HEIGHT / self.zoom) + visible_pad
+
         for food in self.food:
-            food.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
+            if view_min_x < food.x < view_max_x and view_min_y < food.y < view_max_y:
+                food.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
             
-        # 5. 畫蛇
+        # 5. 畫蛇 (Visual Culling)
         for snake in self.snakes:
-            snake.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
+            # Simple bounding box check using head and estimated length
+            # Note: Snake body can trail behind, so we need a generous margin or check body parts
+            # For performance, checking head + max_len radius is faster than iterating body parts
+            # Safe approximation: snake.head.x +/- (snake.length * snake.spacing)
+            
+            # Simple check: Is head on screen? (Most common case)
+            # OR Is any part on screen? (Accurate but slow)
+            # Compromise: Check if head is within reasonable distance of camera center
+            # Max possible dimension of a snake is roughly length * spacing
+            snake_bound = snake.length * snake.spacing
+            
+            if (view_min_x - snake_bound < snake.head.centerx < view_max_x + snake_bound and
+                view_min_y - snake_bound < snake.head.centery < view_max_y + snake_bound):
+                snake.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
         
         # 6. UI Dashboard (Top-Left)
         player = self.snakes[0] # Usually player or spectator target
