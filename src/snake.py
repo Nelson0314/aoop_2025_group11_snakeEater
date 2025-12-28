@@ -14,13 +14,14 @@ class Snake():
         self.speed = self.base_speed
         self.isBoosting = False
         
-        self.body = []
-        # Initialize body parts
-        for i in range(10): 
-             self.body.append(pygame.Rect(x - i * 5, y, TILE_SIZE, TILE_SIZE))
-        
         self.length = 10
         self.exact_length = float(self.length) # Float for smooth decay
+        
+        self.body = []
+        # Initialize body parts
+        current_spacing = self.spacing
+        for i in range(10): 
+             self.body.append(pygame.Rect(x - i * current_spacing, y, TILE_SIZE, TILE_SIZE))
 
     @property
     def radius(self):
