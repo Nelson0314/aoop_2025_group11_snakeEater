@@ -414,10 +414,12 @@ class GAME():
         headX = snake.head.centerx
         headY = snake.head.centery
 
-        # 1. 檢查牆壁
-        if headX < headRadius or headX > MAP_WIDTH - headRadius or \
-           headY < headRadius or headY > MAP_HEIGHT - headRadius:
-            return True # Killed by Wall
+        # 1. 檢查牆壁 (Remove death check, allow sliding)
+        # Position is clamped in snake.move(), so we don't need to kill them here.
+        # Wall penalty is applied in update() loop for RL.
+        # if headX < headRadius or headX > MAP_WIDTH - headRadius or \
+        #    headY < headRadius or headY > MAP_HEIGHT - headRadius:
+        #     return True # Killed by Wall
 
         # 2. 檢查其他蛇
         for otherSnake in self.snakes:
