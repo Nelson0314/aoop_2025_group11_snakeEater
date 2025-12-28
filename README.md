@@ -140,6 +140,8 @@ python main.py
 *   **Controls**: Mouse to steer your snake.
 *   **Goal**: Eat food to grow, avoid walls and other snakes. Cut off opponents to kill them.
 
+![Play Mode](docs/main.png)
+
 ### Spectator / Training Mode
 To watch the AI training process:
 ```bash
@@ -148,6 +150,8 @@ python learn.py
 *   **Controls**:
     *   `A` / `D`: Switch between different AI snakes to spectate.
     *   `G`: Toggle "God View" to see the entire map.
+
+![Spectator Mode](docs/learn.png)
 
 ## Credits
 
