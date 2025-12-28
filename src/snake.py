@@ -58,10 +58,10 @@ class Snake():
         radius = int(self.radius * zoom)
         if radius < 1: radius = 1
         
-        # Draw Body
-        for i, part in enumerate(self.body):
-            # Skip head (index 0)
-            if i == 0: continue
+        # Draw Body (Reverse order so tail is below neck)
+        # Iterate from last element down to index 1
+        for i in range(len(self.body) - 1, 0, -1):
+            part = self.body[i]
             
             screenX = (part.centerx - cameraX) * zoom
             screenY = (part.centery - cameraY) * zoom
