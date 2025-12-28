@@ -55,10 +55,15 @@ def show_start_screen(screen, title="SLITHER AI", subtitle="Press ENTER to Start
 
         # 2. Blinking Subtitle
         alpha += alpha_dir
-        if alpha >= 255 or alpha <= 50:
-            alpha_dir *= -1
-        
-        sub_surf = sub_font.render(subtitle, True, WHITE)
+        if alpha >= 255:
+            alpha = 255
+            alpha_dir = -3 # Slower fade out
+        elif alpha <= 100: # Don't fade out completely
+            alpha = 100
+            alpha_dir = 3
+
+        # Use Yellow for better visibility against dark blue
+        sub_surf = sub_font.render(subtitle, True, (255, 255, 100)) 
         sub_surf.set_alpha(alpha)
         sub_rect = sub_surf.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         screen.blit(sub_surf, sub_rect)
