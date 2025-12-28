@@ -11,9 +11,10 @@ from food import Food
 import math
 
 class GAME():
-    def __init__(self, screen, mode='play'):
+    def __init__(self, screen, mode='play', clock=None):
         self.screen = screen
         self.mode = mode # 'play' or 'learn'
+        self.clock = clock
         
         self.snakes = []
         self.food = []
@@ -462,11 +463,12 @@ class GAME():
             # 2. Stats (Small)
             stats_color = (200, 200, 200)
             p_head = player.head
+            fps_val = int(self.clock.get_fps()) if self.clock else "N/A"
             line2 = f"Pos: ({int(p_head.centerx)}, {int(p_head.centery)}) | Len: {int(player.length)}"
-            line3 = f"Zoom: {self.zoom:.2f} | FPS: {int(pygame.time.Clock().get_fps()) if 'clock' in locals() else 'N/A'}"
+            line3 = f"Zoom: {self.zoom:.2f} | FPS: {fps_val}"
             
             surf2 = self.font.render(line2, True, stats_color)
-            surf3 = self.font.render(line3, True, stats_color) # FPS logic needs clock passed or stored
+            surf3 = self.font.render(line3, True, stats_color)
 
             self.screen.blit(surf2, (25, 60))
             self.screen.blit(surf3, (25, 80))

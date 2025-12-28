@@ -33,7 +33,7 @@ def main():
     # - AI snakes only
     # - Learning enabled
     # - Spectator camera
-    game = GAME(screen, mode='learn')
+    game = GAME(screen, mode='learn', clock=clock)
 
     running = True
     while running:

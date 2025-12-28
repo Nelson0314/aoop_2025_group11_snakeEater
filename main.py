@@ -18,7 +18,7 @@ def main():
 
     clock = pygame.time.Clock()
 
-    game = GAME(screen, mode='play')
+    game = GAME(screen, mode='play', clock=clock)
 
     running = True
     while running:
