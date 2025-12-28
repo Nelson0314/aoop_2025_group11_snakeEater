@@ -1,10 +1,10 @@
 # SnakeEater AI
 
-A comprehensive update to the classic Snake game, featuring a reinforcement learning-based AI agent, polished UI, and a structured codebase. This project demonstrates the integration of modern game development practices with machine learning using Python and Pygame.
+A comprehensive update to the classic Snake game, featuring a reinforcement learning-based AI agent. This project demonstrates the integration of modern game development practices with machine learning using Python and Pygame.
 
 ## Project Overview
 
-SnakeEater AI transforms the traditional arcade game into a battle royale environment. The project showcases:
+SnakeEater AI features a battle royale environment. The project showcases:
 *   **Machine Learning**: An intelligent agent trained using Q-Learning to survive and compete.
 *   **Game Development**: A robust game engine built on Pygame with optimized rendering and collision detection.
 *   **UI/UX**: Modern user interface with dynamic text, scoreboards, and smooth visual effects.
@@ -15,7 +15,6 @@ SnakeEater AI transforms the traditional arcade game into a battle royale enviro
 *   **Spectator Mode**: Watch the AI learn and evolve in real-time (`learn.py`).
 *   **Visual Polish**: Custom textures for snakes and backgrounds, particle effects, and polished UI elements.
 *   **Audio Integration**: Background music and sound effects for immersive gameplay.
-*   **Optimized Performance**: Implementation of view culling and efficient math for high frame rates with many entities.
 
 ## Architecture
 
@@ -65,7 +64,6 @@ python learn.py
 ## Credits
 
 **Group 11**
-*   Nelson
-*   [Other Team Members]
+*   Nelson0314
 
 Developed for AOOP 2025.
