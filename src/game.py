@@ -217,7 +217,8 @@ class GAME():
             player = self.snakes[0] # Assuming player is always [0]
             if isinstance(player, playerSnake):
                 snakeLengthWorld = player.length * player.spacing
-                targetVirtualWidth = max(snakeLengthWorld * 5, 200) # Increased FOV (3->5) and min width (100->200)
+                # Adjusted Zoom: Base 600 + 1.5x length (prevents excessive zoom out at high scores)
+                targetVirtualWidth = max(600 + snakeLengthWorld * 1.5, 200)
                 targetZoom = SCREEN_WIDTH / targetVirtualWidth
                 self.zoom += (targetZoom - self.zoom) * 0.05
                 self.cameraX = player.head.centerx - (SCREEN_WIDTH / self.zoom) / 2
