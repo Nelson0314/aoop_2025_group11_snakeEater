@@ -140,10 +140,7 @@ class Snake():
         # If logical length < physical body count, remove tail
         while len(self.body) > self.length:
             self.body.pop()
-            targetX = leader.centerx - dx * scale
-            targetY = leader.centery - dy * scale
-            follower.centerx = targetX
-            follower.centery = targetY
+
 
 class playerSnake(Snake):
     def __init__(self, x, y, color):
