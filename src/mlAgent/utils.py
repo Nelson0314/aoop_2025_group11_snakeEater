@@ -11,9 +11,10 @@ def getState(snake, snakes, foods, mapWidth, mapHeight):
     head = snake.body[0]
     
     # 1. Look-ahead points for danger detection
-    pointL = pygame.Vector2(head.centerx, head.centery) + snake.direction.rotate(-45) * TILE_SIZE * 5
-    pointF = pygame.Vector2(head.centerx, head.centery) + snake.direction * TILE_SIZE * 5
-    pointR = pygame.Vector2(head.centerx, head.centery) + snake.direction.rotate(45) * TILE_SIZE * 5
+    # 1. Look-ahead points for danger detection (Increased vision range)
+    pointL = pygame.Vector2(head.centerx, head.centery) + snake.direction.rotate(-45) * TILE_SIZE * 8
+    pointF = pygame.Vector2(head.centerx, head.centery) + snake.direction * TILE_SIZE * 8
+    pointR = pygame.Vector2(head.centerx, head.centery) + snake.direction.rotate(45) * TILE_SIZE * 8
 
     def isCollision(pt):
         # Wall collision
