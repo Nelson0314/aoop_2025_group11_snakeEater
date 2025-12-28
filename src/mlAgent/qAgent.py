@@ -10,7 +10,8 @@ class QLearningAgent:
         self.lr = learningRate
         self.gamma = discountFactor
         self.epsilon = epsilon
-        self.modelFile = config.MODEL_FILE_NAME
+        self.saveFile = config.MODEL_SAVE_FILE
+        self.loadFile = config.MODEL_LOAD_FILE
 
     def getQValue(self, state, action):
         return self.qTable.get((state, action), 0.0)
@@ -41,17 +42,28 @@ class QLearningAgent:
 
     def saveModel(self, filepath=None):
         if filepath is None:
-            filepath = self.modelFile
+            filepath = self.saveFile
         with open(filepath, "wb") as f:
             pickle.dump(self.qTable, f)
         print(f"Model saved to {filepath}")
 
     def loadModel(self, filepath=None):
         if filepath is None:
-            filepath = self.modelFile
-        if os.path.exists(filepath):
-            with open(filepath, "rb") as f:
+            filepath = self.loadFile
+        
+        # Fallback logic: check load file, if not exists, check save file (legacy/continuing training)
+        finalPath = filepath
+        if not os.path.exists(finalPath):
+            print(f"Warning: {finalPath} not found. Trying {self.saveFile}...")
+            if os.path.exists(self.saveFile):
+                finalPath = self.saveFile
+            else:
+                print("No saved model found, starting fresh.")
+                return
+
+        try:
+            with open(finalPath, "rb") as f:
                 self.qTable = pickle.load(f)
-            print(f"Model loaded from {filepath}")
-        else:
-            print("No saved model found, starting fresh.")
+            print(f"Model loaded from {finalPath}")
+        except Exception as e:
+             print(f"Error loading model: {e}")

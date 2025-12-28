@@ -16,7 +16,8 @@ REWARD_KILL = 20         # Reward for causing another snake to die
 
 # Training settings
 MODEL_SAVE_INTERVAL = 350 # Save the Q-table every N frames
-MODEL_FILE_NAME = os.path.join("mlAgent", "qTable.pkl")
+MODEL_SAVE_FILE = os.path.join("mlAgent", "qTable.pkl")
+MODEL_LOAD_FILE = os.path.join("mlAgent", "qTable_trained.pkl")
 
 # Action settings
 TURN_ANGLE = 15           # Degrees to turn left or right per action
