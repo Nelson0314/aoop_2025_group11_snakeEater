@@ -9,6 +9,7 @@ from .settings import *
 from .snake import playerSnake, ComputerSnake
 from .food import Food, SmallFood, MediumFood, LargeFood
 import math
+import datetime
 
 class GAME():
     def __init__(self, screen, mode='play', clock=None):
@@ -147,6 +148,15 @@ class GAME():
                          self.cameraMode = 'follow'
                      else:
                          self.cameraMode = 'god'
+             
+             # Screenshot (P)
+             if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                 if not os.path.exists(os.path.join("docs", "screenshots")):
+                     os.makedirs(os.path.join("docs", "screenshots"))
+                 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                 filename = os.path.join("docs", "screenshots", f"screenshot_{timestamp}.png")
+                 pygame.image.save(self.screen, filename)
+                 print(f"Screenshot saved: {filename}")
         
         # Handle wraparound for spectator index safely later in update
         if self.state == 'game_over':
