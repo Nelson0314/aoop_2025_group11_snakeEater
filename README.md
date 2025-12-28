@@ -165,7 +165,9 @@ To play the game against AI opponents:
 ```bash
 python main.py
 ```
-*   **Controls**: Mouse to steer your snake.
+*   **Controls**: 
+    *   **Mouse Move**: Steer your snake.
+    *   **Mouse Left Click (Hold)**: Boost speed (Consumes score/length).
 *   **Goal**: Eat food to grow, avoid walls and other snakes. Cut off opponents to kill them.
 
 ![Play Mode](docs/main.png)
