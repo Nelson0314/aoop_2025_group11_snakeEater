@@ -78,40 +78,72 @@ class Snake():
         self.score += amount
 
     def move(self):
-        head = self.body[0]
-        
-        newX = head.centerx + self.direction.x * self.speed
-        newY = head.centery + self.direction.y * self.speed
-        
-        # 使用動態半徑進行邊界檢查
-        radius = self.radius 
-        
-        if newX - radius < 0: 
-            newX = radius
-        elif newX + radius > MAP_WIDTH: 
-            newX = MAP_WIDTH - radius
-        if newY - radius < 0: 
-            newY = radius
-        elif newY + radius > MAP_HEIGHT: 
-            newY = MAP_HEIGHT - radius
-        head.center = (newX, newY)
+        # 1. Boost Logic
+        if self.isBoosting and self.score > MIN_SCORE_TO_BOOST:
+            self.speed = BOOST_SPEED
+            # Deduction score (length)
+            self.exact_length -= BOOST_COST
+            self.length = int(self.exact_length)
+            self.score = self.length # Sync score with length
+        else:
+             self.speed = self.base_speed
+             # Auto disable boost if score too low
+             if self.score <= MIN_SCORE_TO_BOOST:
+                 self.isBoosting = False
 
-        while len(self.body) < self.length:
-            self.body.append(pygame.Rect(head.x, head.y, TILE_SIZE, TILE_SIZE))
-
+        # 2. Update Position (Float precision)
+        self.x += self.direction.x * self.speed
+        self.y += self.direction.y * self.speed
+        
+        # 3. Boundary Clamp (Slide along wall)
+        r = self.radius
+        if self.x < r: self.x = r
+        if self.x > MAP_WIDTH - r: self.x = MAP_WIDTH - r
+        if self.y < r: self.y = r
+        if self.y > MAP_HEIGHT - r: self.y = MAP_HEIGHT - r
+        
+        # 4. Update Head Rect
+        self.head.centerx = int(self.x)
+        self.head.centery = int(self.y)
+        
+        # 5. Body Following Logic
+        # Ensure body list is initialized
+        if not self.body:
+             self.body.append(self.head.copy())
+        
+        # Sync Head (body[0]) with self.head / self.x,y
+        self.body[0] = self.head.copy()
+            
+        current_spacing = self.spacing
         for i in range(1, len(self.body)):
-            leader = self.body[i-1]
-            follower = self.body[i]
-
-            dx = leader.centerx - follower.centerx
-            dy = leader.centery - follower.centery
+            # Previous body part (leader)
+            prev = self.body[i-1]
+            curr = self.body[i]
+            
+            dx = prev.centerx - curr.centerx
+            dy = prev.centery - curr.centery
             dist = math.sqrt(dx**2 + dy**2)
-            if dist > 0:
-                scale = self.spacing / dist
-                targetX = leader.centerx - dx * scale
-                targetY = leader.centery - dy * scale
-                follower.centerx = targetX
-                follower.centery = targetY
+            
+            # If distance is greater than spacing, pull the current part closer
+            if dist > current_spacing:
+                angle = math.atan2(dy, dx)
+                newX = prev.centerx - math.cos(angle) * current_spacing
+                newY = prev.centery - math.sin(angle) * current_spacing
+                self.body[i] = pygame.Rect(int(newX), int(newY), TILE_SIZE, TILE_SIZE)
+
+        # 6. Length Control
+        # If logical length > physical body count, add body parts
+        while len(self.body) < self.length:
+            # Add new part at the tail position
+            self.body.append(self.body[-1].copy())
+        
+        # If logical length < physical body count, remove tail
+        while len(self.body) > self.length:
+            self.body.pop()
+            targetX = leader.centerx - dx * scale
+            targetY = leader.centery - dy * scale
+            follower.centerx = targetX
+            follower.centery = targetY
 
 class playerSnake(Snake):
     def __init__(self, x, y, color):
