@@ -126,48 +126,58 @@ class Snake():
         # Head (Body[0]) is always at trace[0]
         self.head.centerx = int(self.x)
         self.head.centery = int(self.y)
-        
+        # Ensure body list is initialized
         if not self.body:
              self.body.append(self.head.copy())
-        self.body[0] = self.head.copy()
         
+        # Sync Head (body[0])
+        self.body[0] = self.head.copy()
+            
         current_spacing = self.spacing
         current_trace_idx = 0
-        accumulated_dist = 0
+        acc_trace_dist = 0 # Cumulative distance along trace
         
-        # Update existing body parts
-        # Algorithm: Walk down the trace until accumulated distance > required distance for next part
+        # We need to place body[i] at distance i * spacing from the head
+        # We assume trace is continuous from head (index 0) backwards
         
         for i in range(1, len(self.body)):
-            # We want body[i] to be at distance i * spacing from head
-            # Or simpler: body[i] is spacing away from body[i-1]
+            target_dist = i * current_spacing
             
-            # Find point on trace that is 'current_spacing' away from body[i-1] (or previous point found)
-            # Since trace is discrete, we just find the first point > spacing distance
-            
-            start_pos = (self.body[i-1].centerx, self.body[i-1].centery)
-            
-            # Optimization: Start searching from current_trace_idx
-            found = False
-            for j in range(current_trace_idx, len(self.trace)):
-                p = self.trace[j]
-                dx = start_pos[0] - p[0]
-                dy = start_pos[1] - p[1]
-                dist_sq = dx*dx + dy*dy
+            # Find the segment in trace that contains 'target_dist'
+            while current_trace_idx < len(self.trace) - 1:
+                p1 = self.trace[current_trace_idx]
+                p2 = self.trace[current_trace_idx + 1]
+                dx = p2[0] - p1[0]
+                dy = p2[1] - p1[1]
+                seg_len = math.sqrt(dx**2 + dy**2)
                 
-                # Check squared distance to avoid sqrt spam
-                if dist_sq >= current_spacing * current_spacing:
-                    # Found the point
-                    self.body[i].centerx = int(p[0])
-                    self.body[i].centery = int(p[1])
-                    current_trace_idx = j # Next part starts searching from here
-                    found = True
-                    break
+                if acc_trace_dist + seg_len >= target_dist:
+                    # Target is in this segment
+                    remain_dist = target_dist - acc_trace_dist
+                    ratio = remain_dist / seg_len if seg_len > 0 else 0
+                    
+                    # Interpolate
+                    newX = p1[0] + dx * ratio
+                    newY = p1[1] + dy * ratio
+                    
+                    self.body[i].centerx = int(newX)
+                    self.body[i].centery = int(newY)
+                    break # Done for this body part, stay at this trace segment for next body part?
+                          # No, next body part needs target_dist + spacing. 
+                          # We can continue from current trace segment state, but simpler to just loop or use local variables?
+                          # To optimize: don't reset 'acc_trace_dist' or 'current_trace_idx' completely, 
+                          # but 'target_dist' is increasing. 
+                          # Correct logic: We stay inside this 'while' loop across 'for' iterations? No.
+                          # Standard way: Just continue loop.
+                    
+                else:
+                    # Move to next segment
+                    acc_trace_dist += seg_len
+                    current_trace_idx += 1
             
-            if not found:
-                 # Ran out of trace (should not happen if trace is long enough)
-                 # Just stack at end of trace
-                 if self.trace:
+            # If ran out of trace
+            if current_trace_idx >= len(self.trace) - 1:
+                if self.trace:
                      last = self.trace[-1]
                      self.body[i].centerx = int(last[0])
                      self.body[i].centery = int(last[1])
