@@ -58,6 +58,20 @@ class GAME():
             print("Assets not found. Please run generate_assets.py")
             self.assets = {'skins': [], 'grid': None}
 
+        # Music
+        bgm_path = os.path.join("assets", "bgm.mp3")
+        if os.path.exists(bgm_path):
+            try:
+                # pygame.mixer is initialized by pygame.init()
+                pygame.mixer.music.load(bgm_path)
+                pygame.mixer.music.set_volume(0.3) # 30% volume
+                pygame.mixer.music.play(-1) # Loop forever
+                print(f"Playing BGM: {bgm_path}")
+            except Exception as e:
+                print(f"Error playing music: {e}")
+        else:
+            print(f"No BGM found at {bgm_path}")
+
     def setUp(self):
         # Create Player ONLY in 'play' mode
         if self.mode == 'play':

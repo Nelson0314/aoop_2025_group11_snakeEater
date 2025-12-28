@@ -11,12 +11,12 @@ WINDOW_TITLE = "Slither AI Training - Spectator Mode"
 
 def main():
     # Remove existing model for fresh training
-    if os.path.exists(config.MODEL_FILE_NAME):
-        try:
-            os.remove(config.MODEL_FILE_NAME)
-            print(f"Deleted existing model: {config.MODEL_FILE_NAME}")
-        except OSError as e:
-            print(f"Error deleting model: {e}")
+    # if os.path.exists(config.MODEL_FILE_NAME):
+    #     try:
+    #         os.remove(config.MODEL_FILE_NAME)
+    #         print(f"Deleted existing model: {config.MODEL_FILE_NAME}")
+    #     except OSError as e:
+    #         print(f"Error deleting model: {e}")
 
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
