@@ -82,6 +82,9 @@ classDiagram
         +growthValue: int
         +draw()
     }
+    class SmallFood
+    class MediumFood
+    class LargeFood
     
     class QLearningAgent {
         +qTable: dict
@@ -98,6 +101,9 @@ classDiagram
     GAME --> QLearningAgent : integrates
     Snake <|-- PlayerSnake : inheritance
     Snake <|-- ComputerSnake : inheritance
+    Food <|-- SmallFood : inheritance
+    Food <|-- MediumFood : inheritance
+    Food <|-- LargeFood : inheritance
 
     %% Applying Styles
     class GAME core
@@ -105,6 +111,9 @@ classDiagram
     class PlayerSnake entity
     class ComputerSnake entity
     class Food item
+    class SmallFood item
+    class MediumFood item
+    class LargeFood item
     class QLearningAgent ai
 ```
 

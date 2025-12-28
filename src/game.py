@@ -7,7 +7,7 @@ import os
 import sys
 from .settings import *
 from .snake import playerSnake, ComputerSnake
-from .food import Food
+from .food import Food, SmallFood, MediumFood, LargeFood
 import math
 
 class GAME():
@@ -117,7 +117,16 @@ class GAME():
     def spawnFood(self, foodType):
         x = random.randint(20, MAP_WIDTH - 20)
         y = random.randint(20, MAP_HEIGHT - 20)
-        newFood = Food(x, y, foodType)
+        
+        if foodType == 'small':
+            newFood = SmallFood(x, y)
+        elif foodType == 'medium':
+            newFood = MediumFood(x, y)
+        elif foodType == 'large':
+            newFood = LargeFood(x, y)
+        else:
+            newFood = Food(x, y) # Should not happen
+
         self.food.append(newFood)
 
     def handleEvent(self):
@@ -430,11 +439,10 @@ class GAME():
             # 大部分是 medium，偶爾 large
             randVal = random.random()
             if randVal < 0.7:
-                fType = 'medium'
+                food = MediumFood(rect.centerx, rect.centery)
             else:
-                fType = 'large'
+                food = LargeFood(rect.centerx, rect.centery)
             
-            food = Food(rect.centerx, rect.centery, fType)
             self.food.append(food)
 
     def draw(self):
