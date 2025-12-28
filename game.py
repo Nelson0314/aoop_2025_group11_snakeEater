@@ -326,6 +326,10 @@ class GAME():
                     cx = random.randint(100, MAP_WIDTH - 100)
                     cy = random.randint(100, MAP_HEIGHT - 100)
                     newSnake = ComputerSnake(cx, cy, (255, 0, 0))
+                    if self.assets['skins']:
+                        skin_idx = random.randint(0, 2)
+                        h, b = self.assets['skins'][skin_idx]
+                        newSnake.set_skin(h, b)
                     self.snakes.append(newSnake)
                 # 如果是玩家死掉，這裡暫時不重生 (或者可以重生，看需求)
                 elif isinstance(snake, playerSnake):
@@ -402,11 +406,41 @@ class GAME():
         for snake in self.snakes:
             snake.draw(self.screen, self.cameraX, self.cameraY, self.zoom)
         
-        # 6. UI 文字
-        playerHead = self.snakes[0].head
-        coord = f"Score: {self.snakes[0].score} World: ({int(playerHead.centerx)}, {int(playerHead.centery)}) L:{self.snakes[0].length} Z:{self.zoom:.2f}"
-        textSurface = self.font.render(coord, True, WHITE)
-        self.screen.blit(textSurface, (10, 10))
+        # 6. UI Dashboard (Top-Left)
+        player = self.snakes[0] # Usually player or spectator target
+        if player:
+            # Dashboard Config
+            padding = 10
+            panel_width = 220
+            panel_height = 90
+            panel_alpha = 180
+            
+            # Draw Panel Background
+            panel_surf = pygame.Surface((panel_width, panel_height))
+            panel_surf.fill((0, 0, 0))
+            panel_surf.set_alpha(panel_alpha)
+            self.screen.blit(panel_surf, (10, 10))
+            
+            # Draw Borders
+            pygame.draw.rect(self.screen, (100, 200, 255), (10, 10, panel_width, panel_height), 2)
+
+            # Text Info
+            # 1. SCORE (Large)
+            score_text = self.largeFont.render(f"Score: {player.score}", True, (255, 215, 0)) # Gold
+            score_text = pygame.transform.scale(score_text, (int(score_text.get_width() * 0.6), int(score_text.get_height() * 0.6)))
+            self.screen.blit(score_text, (25, 20))
+
+            # 2. Stats (Small)
+            stats_color = (200, 200, 200)
+            p_head = player.head
+            line2 = f"Pos: ({int(p_head.centerx)}, {int(p_head.centery)}) | Len: {int(player.length)}"
+            line3 = f"Zoom: {self.zoom:.2f} | FPS: {int(pygame.time.Clock().get_fps()) if 'clock' in locals() else 'N/A'}"
+            
+            surf2 = self.font.render(line2, True, stats_color)
+            surf3 = self.font.render(line3, True, stats_color) # FPS logic needs clock passed or stored
+
+            self.screen.blit(surf2, (25, 60))
+            self.screen.blit(surf3, (25, 80))
 
         if self.state == 'game_over':
             self.drawGameOver()

@@ -57,6 +57,7 @@ def build():
         "--windowed", # No console window
         "--name", EXE_NAME,
         "--add-data", f"mlAgent{os.pathsep}mlAgent", # Bundle entire mlAgent folder
+        "--add-data", f"assets{os.pathsep}assets", # Bundle assets
         "learn.py" # Entry point
     ]
 
