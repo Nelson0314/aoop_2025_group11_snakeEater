@@ -15,7 +15,7 @@ REWARD_WALL = -300       # Penalty for hitting the wall
 REWARD_KILL = 20         # Reward for causing another snake to die
 
 # Training settings
-MODEL_SAVE_INTERVAL = 350 # Save the Q-table every N frames
+MODEL_SAVE_INTERVAL = 600 # Save the Q-table every N frames
 MODEL_SAVE_FILE = os.path.join("mlAgent", "qTable.pkl")
 MODEL_LOAD_FILE = os.path.join("mlAgent", "qTable_trained.pkl")
 
