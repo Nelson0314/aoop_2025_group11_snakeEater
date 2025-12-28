@@ -518,7 +518,7 @@ class GAME():
 
             # Text Info
             # 1. SCORE
-            score_text = self.largeFont.render(f"Score: {player.score}", True, (255, 215, 0))
+            score_text = self.largeFont.render(f"Score: {int(player.score)}", True, (255, 215, 0))
             score_text = pygame.transform.scale(score_text, (int(score_text.get_width() * 0.6), int(score_text.get_height() * 0.6)))
             self.screen.blit(score_text, (25, 20))
 
