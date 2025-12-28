@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 from .settings import MAP_HEIGHT, MAP_WIDTH, TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, BOOST_SPEED, BOOST_COST, MIN_SCORE_TO_BOOST
 class Snake():
     def __init__(self, x, y, color):
