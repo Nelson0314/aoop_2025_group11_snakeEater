@@ -33,33 +33,77 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ```mermaid
 classDiagram
+    %% Styling - Low Saturation / Pastel
+    classDef default fill:#f9f9f9,stroke:#999,stroke-width:1px,color:#333;
+    classDef core fill:#e2f0d9,stroke:#a9d08e;
+    classDef entity fill:#deebf7,stroke:#9bc2e6;
+    classDef item fill:#fff2cc,stroke:#ffd966;
+    classDef ai fill:#e1d5e7,stroke:#b4a7d6;
+
     class GAME {
-        +snakes: List~Snake~
-        +food: List~Food~
+        +mode: str
+        +snakes: List
+        +food: List
         +agent: QLearningAgent
+        +setUp()
         +update()
         +draw()
+        +checkCollision()
     }
+    
     class Snake {
-        +body: List
+        +body: List[Rect]
         +length: int
+        +score: int
+        +direction: Vector2
         +move()
+        +draw()
+        +grow()
+        +set_skin()
     }
+    
     class PlayerSnake {
+        <<Player Controls>>
         +updateDirectionByMouse()
     }
+    
     class ComputerSnake {
+        <<AI Controlled>>
+        +angle: float
+        +stateOld: tuple
         +performAction(action)
+        +updateDirection()
     }
+
+    class Food {
+        +x: int
+        +y: int
+        +type: str
+        +growthValue: int
+        +draw()
+    }
+    
     class QLearningAgent {
         +qTable: dict
-        +learn()
+        +epsilon: float
+        +lr: float
+        +getQValue(state, action)
+        +chooseAction(state)
+        +learn(state, action, reward, next_state)
     }
-    GAME *-- Snake : has
-    GAME *-- Food : has
-    GAME --> QLearningAgent : uses
-    Snake <|-- PlayerSnake : inherits
-    Snake <|-- ComputerSnake : inherits
+
+    %% Relationships
+    GAME *-- Snake : manages
+    GAME *-- Food : manages
+    GAME --> QLearningAgent : integrates
+    Snake <|-- PlayerSnake : inheritance
+    Snake <|-- ComputerSnake : inheritance
+
+    %% Applying Styles
+    class GAME core
+    class Snake,PlayerSnake,ComputerSnake entity
+    class Food item
+    class QLearningAgent ai
 ```
 
 ## Installation
