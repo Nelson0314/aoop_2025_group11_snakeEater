@@ -61,105 +61,63 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-<table width="100%">
+<div align="center">
+
+<h3>System Architecture</h3>
+
+<table border="0" cellspacing="10" cellpadding="10" width="80%">
+  <!-- Level 1: Core -->
   <tr>
-    <th width="25%">Core System</th>
-    <th width="30%">Entities</th>
-    <th width="20%">Items</th>
-    <th width="25%">Artificial Intelligence</th>
+    <td colspan="3" align="center">
+        <kbd><strong>GAME</strong></kbd><br>
+        <sub>Core Controller</sub><br>
+        <br>
+        <span style="font-size: 20px;">⬇️</span>
+    </td>
   </tr>
+
+  <!-- Level 2: Sub-Systems -->
   <tr>
-    <!-- Core -->
-    <td valign="top">
-      <h3>GAME</h3>
-      <ul>
-        <li><b>Properties</b>
-            <ul>
-                <li><code>mode</code>: str</li>
-                <li><code>snakes</code>: List</li>
-                <li><code>food</code>: List</li>
-                <li><code>agent</code>: QLearningAgent</li>
-            </ul>
-        </li>
-        <li><b>Methods</b>
-            <ul>
-                <li><code>setUp()</code></li>
-                <li><code>update()</code></li>
-                <li><code>draw()</code></li>
-                <li><code>checkCollision()</code></li>
-            </ul>
-        </li>
-      </ul>
-    </td>
     <!-- Entities -->
-    <td valign="top">
-      <h3>Snake</h3>
-      <sub>Base Class</sub>
-      <ul>
-        <li><code>body</code>: List[Rect]</li>
-        <li><code>length</code>: int</li>
-        <li><code>score</code>: int</li>
-        <li><code>direction</code>: Vector2</li>
-        <li><code>move()</code></li>
-        <li><code>draw()</code></li>
-      </ul>
-      <hr>
-      <h3>PlayerSnake</h3>
-      <sub>Inherits Snake</sub>
-      <ul>
-        <li><code>updateDirectionByMouse()</code></li>
-      </ul>
-      <hr>
-      <h3>ComputerSnake</h3>
-      <sub>Inherits Snake</sub>
-      <ul>
-        <li><code>angle</code>: float</li>
-        <li><code>stateOld</code>: tuple</li>
-        <li><code>performAction(action)</code></li>
-      </ul>
+    <td align="center" valign="top" width="33%">
+        <kbd><strong>Snake</strong></kbd><br>
+        <sub>Base Entity</sub><br>
+        <span style="font-size: 20px;">⬇️</span><br>
+        <br>
+        <table border="0">
+            <tr>
+                <td align="center"><kbd>Player<br>Snake</kbd></td>
+                <td align="center"><kbd>Computer<br>Snake</kbd></td>
+            </tr>
+        </table>
     </td>
+
     <!-- Items -->
-    <td valign="top">
-      <h3>Food</h3>
-      <ul>
-        <li><b>Properties</b>
-            <ul>
-                <li><code>x, y</code>: int</li>
-                <li><code>type</code>: str</li>
-                <li><code>growthValue</code>: int</li>
-            </ul>
-        </li>
-        <li><b>Subclasses</b>
-            <ul>
-                <li><code>SmallFood</code></li>
-                <li><code>MediumFood</code></li>
-                <li><code>LargeFood</code></li>
-            </ul>
-        </li>
-      </ul>
+    <td align="center" valign="top" width="33%">
+        <kbd><strong>Food</strong></kbd><br>
+        <sub>Item System</sub><br>
+        <span style="font-size: 20px;">⬇️</span><br>
+        <br>
+        <kbd>Small</kbd> <kbd>Medium</kbd> <kbd>Large</kbd>
     </td>
+
     <!-- AI -->
-    <td valign="top">
-      <h3>QLearningAgent</h3>
-      <ul>
-        <li><b>Properties</b>
-            <ul>
-                <li><code>qTable</code>: dict</li>
-                <li><code>epsilon</code>: float</li>
-                <li><code>lr</code>: float</li>
-            </ul>
-        </li>
-        <li><b>Methods</b>
-            <ul>
-                <li><code>getQValue()</code></li>
-                <li><code>chooseAction()</code></li>
-                <li><code>learn()</code></li>
-            </ul>
-        </li>
-      </ul>
+    <td align="center" valign="top" width="33%">
+        <kbd><strong>QLearningAgent</strong></kbd><br>
+        <sub>AI Brain</sub><br>
+        <br>
+        <div align="left">
+        <small>
+        • Q-Table<br>
+        • Epsilon-Greedy<br>
+        • Bellman Eq.
+        </small>
+        </div>
     </td>
   </tr>
 </table>
+
+</div>
 
 ## Installation
 
