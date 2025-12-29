@@ -61,91 +61,9 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-```mermaid
-classDiagram
-    %% Styling - Low Saturation / Pastel
-    classDef default fill:#f9f9f9,stroke:#999,stroke-width:1px,color:#333;
-    classDef core fill:#e2f0d9,stroke:#a9d08e;
-    classDef entity fill:#deebf7,stroke:#9bc2e6;
-    classDef item fill:#fff2cc,stroke:#ffd966;
-    classDef ai fill:#e1d5e7,stroke:#b4a7d6;
-
-    class GAME {
-        +mode: str
-        +snakes: List
-        +food: List
-        +agent: QLearningAgent
-        +setUp()
-        +update()
-        +draw()
-        +checkCollision()
-    }
-    
-    class Snake {
-        +body: List[Rect]
-        +length: int
-        +score: int
-        +direction: Vector2
-        +move()
-        +draw()
-        +grow()
-        +set_skin()
-    }
-    
-    class PlayerSnake {
-        <<Player Controls>>
-        +updateDirectionByMouse()
-    }
-    
-    class ComputerSnake {
-        <<AI Controlled>>
-        +angle: float
-        +stateOld: tuple
-        +performAction(action)
-        +updateDirection()
-    }
-
-    class Food {
-        +x: int
-        +y: int
-        +type: str
-        +growthValue: int
-        +draw()
-    }
-    class SmallFood
-    class MediumFood
-    class LargeFood
-    
-    class QLearningAgent {
-        +qTable: dict
-        +epsilon: float
-        +lr: float
-        +getQValue(state, action)
-        +chooseAction(state)
-        +learn(state, action, reward, next_state)
-    }
-
-    %% Relationships
-    GAME *-- Snake : manages
-    GAME *-- Food : manages
-    GAME --> QLearningAgent : integrates
-    Snake <|-- PlayerSnake : inheritance
-    Snake <|-- ComputerSnake : inheritance
-    Food <|-- SmallFood : inheritance
-    Food <|-- MediumFood : inheritance
-    Food <|-- LargeFood : inheritance
-
-    %% Applying Styles
-    class GAME core
-    class Snake entity
-    class PlayerSnake entity
-    class ComputerSnake entity
-    class Food item
-    class SmallFood item
-    class MediumFood item
-    class LargeFood item
-    class QLearningAgent ai
-```
+<div align="center">
+  <img src="https://mermaid.ink/img/eyJjb2RlIjogImNsYXNzRGlhZ3JhbVxuICAgICUlIFN0eWxpbmcgLSBMb3cgU2F0dXJhdGlvbiAvIFBhc3RlbFxuICAgIGNsYXNzRGVmIGRlZmF1bHQgZmlsbDojZjlmOWY5LHN0cm9rZTojOTk5LHN0cm9rZS13aWR0aDoxcHgsY29sb3I6IzMzMztcbiAgICBjbGFzc0RlZiBjb3JlIGZpbGw6I2UyZjBkOSxzdHJva2U6I2E5ZDA4ZTtcbiAgICBjbGFzc0RlZiBlbnRpdHkgZmlsbDojZGVlYmY3LHN0cm9rZTojOWJjMmU2O1xuICAgIGNsYXNzRGVmIGl0ZW0gZmlsbDojZmZmMmNjLHN0cm9rZTojZmZkOTY2O1xuICAgIGNsYXNzRGVmIGFpIGZpbGw6I2UxZDVlNyxzdHJva2U6I2I0YTdkNjtcblxuICAgIGNsYXNzIEdBTUUge1xuICAgICAgICArbW9kZTogc3RyXG4gICAgICAgICtzbmFrZXM6IExpc3RcbiAgICAgICAgK2Zvb2Q6IExpc3RcbiAgICAgICAgK2FnZW50OiBRTGVhcm5pbmdBZ2VudFxuICAgICAgICArc2V0VXAoKVxuICAgICAgICArdXBkYXRlKClcbiAgICAgICAgK2RyYXcoKVxuICAgICAgICArY2hlY2tDb2xsaXNpb24oKVxuICAgIH1cbiAgICBcbiAgICBjbGFzcyBTbmFrZSB7XG4gICAgICAgICtib2R5OiBMaXN0W1JlY3RdXG4gICAgICAgICtsZW5ndGg6IGludFxuICAgICAgICArc2NvcmU6IGludFxuICAgICAgICArZGlyZWN0aW9uOiBWZWN0b3IyXG4gICAgICAgICttb3ZlKClcbiAgICAgICAgK2RyYXcoKVxuICAgICAgICArZ3JvdygpXG4gICAgICAgICtzZXRfc2tpbigpXG4gICAgfVxuICAgIFxuICAgIGNsYXNzIFBsYXllclNuYWtlIHtcbiAgICAgICAgPDxQbGF5ZXIgQ29udHJvbHM-PlxuICAgICAgICArdXBkYXRlRGlyZWN0aW9uQnlNb3VzZSgpXG4gICAgfVxuICAgIFxuICAgIGNsYXNzIENvbXB1dGVyU25ha2Uge1xuICAgICAgICA8PEFJIENvbnRyb2xsZWQ-PlxuICAgICAgICArYW5nbGU6IGZsb2F0XG4gICAgICAgICtzdGF0ZU9sZDogdHVwbGVcbiAgICAgICAgK3BlcmZvcm1BY3Rpb24oYWN0aW9uKVxuICAgICAgICArdXBkYXRlRGlyZWN0aW9uKClcbiAgICB9XG5cbiAgICBjbGFzcyBGb29kIHtcbiAgICAgICAgK3g6IGludFxuICAgICAgICAreTogaW50XG4gICAgICAgICt0eXBlOiBzdHJcbiAgICAgICAgK2dyb3d0aFZhbHVlOiBpbnRcbiAgICAgICAgK2RyYXcoKVxuICAgIH1cbiAgICBjbGFzcyBTbWFsbEZvb2RcbiAgICBjbGFzcyBNZWRpdW1Gb29kXG4gICAgY2xhc3MgTGFyZ2VGb29kXG4gICAgXG4gICAgY2xhc3MgUUxlYXJuaW5nQWdlbnQge1xuICAgICAgICArcVRhYmxlOiBkaWN0XG4gICAgICAgICtlcHNpbG9uOiBmbG9hdFxuICAgICAgICArbHI6IGZsb2F0XG4gICAgICAgICtnZXRRVmFsdWUoc3RhdGUsIGFjdGlvbilcbiAgICAgICAgK2Nob29zZUFjdGlvbihzdGF0ZSlcbiAgICAgICAgK2xlYXJuKHN0YXRlLCBhY3Rpb24sIHJld2FyZCwgbmV4dF9zdGF0ZSlcbiAgICB9XG5cbiAgICAlJSBSZWxhdGlvbnNoaXBzXG4gICAgR0FNRSAqLS0gU25ha2UgOiBtYW5hZ2VzXG4gICAgR0FNRSAqLS0gRm9vZCA6IG1hbmFnZXNcbiAgICBHQU1FIC0tPiBRTGVhcm5pbmdBZ2VudCA6IGludGVncmF0ZXNcbiAgICBTbmFrZSA8fC0tIFBsYXllclNuYWtlIDogaW5oZXJpdGFuY2VcbiAgICBTbmFrZSA8fC0tIENvbXB1dGVyU25ha2UgOiBpbmhlcml0YW5jZVxuICAgIEZvb2QgPHwtLSBTbWFsbEZvb2QgOiBpbmhlcml0YW5jZVxuICAgIEZvb2QgPHwtLSBNZWRpdW1Gb29kIDogaW5oZXJpdGFuY2VcbiAgICBGb29kIDx8LS0gTGFyZ2VGb29kIDogaW5oZXJpdGFuY2VcblxuICAgICUlIEFwcGx5aW5nIFN0eWxlc1xuICAgIGNsYXNzIEdBTUUgY29yZVxuICAgIGNsYXNzIFNuYWtlIGVudGl0eVxuICAgIGNsYXNzIFBsYXllclNuYWtlIGVudGl0eVxuICAgIGNsYXNzIENvbXB1dGVyU25ha2UgZW50aXR5XG4gICAgY2xhc3MgRm9vZCBpdGVtXG4gICAgY2xhc3MgU21hbGxGb29kIGl0ZW1cbiAgICBjbGFzcyBNZWRpdW1Gb29kIGl0ZW1cbiAgICBjbGFzcyBMYXJnZUZvb2QgaXRlbVxuICAgIGNsYXNzIFFMZWFybmluZ0FnZW50IGFpIiwgIm1lcm1haWQiOiB7InRoZW1lIjogImRlZmF1bHQifX0=" alt="Class Diagram" width="100%"/>
+</div>
 
 ## Installation
 
