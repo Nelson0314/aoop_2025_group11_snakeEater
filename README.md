@@ -62,61 +62,114 @@ The project is organized into a modular structure to ensure maintainability and 
 ## Class Structure
 
 <div align="center">
+<table style="font-family: monospace; border-spacing: 20px;">
+    <!-- GAME (Core) -->
+    <tr>
+        <td colspan="4" align="center">
+            <div style="border: 1px solid #999; border-radius: 5px; background: #e2f0d9; color: #333; width: 300px; text-align: left; overflow: hidden; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
+                <div style="background: #a9d08e; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #999;">GAME</div>
+                <div style="padding: 10px; font-size: 12px; line-height: 1.5;">
+                    + mode: str<br>
+                    + snakes: List<br>
+                    + food: List<br>
+                    + agent: QLearningAgent<br>
+                    <hr style="border: 0; border-top: 1px solid #ccc; margin: 5px 0;">
+                    + setUp()<br>
+                    + update()<br>
+                    + draw()<br>
+                    + checkCollision()
+                </div>
+            </div>
+            <div style="font-size: 20px; color: #666; margin: 5px;">| constructs |</div>
+        </td>
+    </tr>
 
-<h3>System Architecture</h3>
+    <!-- Second Row: Snake, Food, Agent -->
+    <tr>
+        <!-- Snake Branch -->
+        <td valign="top" align="center">
+            <div style="border: 1px solid #999; border-radius: 5px; background: #deebf7; color: #333; width: 220px; text-align: left; overflow: hidden;">
+                <div style="background: #9bc2e6; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #999;">Snake</div>
+                <div style="padding: 10px; font-size: 12px; line-height: 1.5;">
+                    + body: List[Rect]<br>
+                    + length: int<br>
+                    + score: int<br>
+                    + direction: Vector2<br>
+                    <hr style="border: 0; border-top: 1px solid #ccc; margin: 5px 0;">
+                    + move()<br>
+                    + draw()<br>
+                    + grow()<br>
+                    + set_skin()
+                </div>
+            </div>
+            <div style="font-size: 20px; color: #666;">▲</div>
+            
+            <!-- Snake Subclasses -->
+             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 5px;">
+                <!-- Player Snake -->
+                <div style="border: 1px solid #999; border-radius: 5px; background: #deebf7; color: #333; width: 140px; text-align: left;">
+                    <div style="background: #9bc2e6; padding: 3px; text-align: center; font-weight: bold; font-size: 11px;">PlayerSnake</div>
+                    <div style="padding: 5px; font-size: 10px;">
+                        &lt;&lt;Player&gt;&gt;<br>
+                        + updateDirectionByMouse()
+                    </div>
+                </div>
+                <!-- Computer Snake -->
+                <div style="border: 1px solid #999; border-radius: 5px; background: #deebf7; color: #333; width: 140px; text-align: left;">
+                    <div style="background: #9bc2e6; padding: 3px; text-align: center; font-weight: bold; font-size: 11px;">ComputerSnake</div>
+                    <div style="padding: 5px; font-size: 10px;">
+                        &lt;&lt;AI&gt;&gt;<br>
+                        + angle: float<br>
+                        + stateOld: tuple<br>
+                        + performAction()<br>
+                    </div>
+                </div>
+            </div>
+        </td>
 
-<table border="0" cellspacing="10" cellpadding="10" width="80%">
-  <!-- Level 1: Core -->
-  <tr>
-    <td colspan="3" align="center">
-        <kbd><strong>GAME</strong></kbd><br>
-        <sub>Core Controller</sub><br>
-        <br>
-        <span style="font-size: 20px;">⬇️</span>
-    </td>
-  </tr>
+        <!-- Connector Space -->
+        <td width="20"></td>
 
-  <!-- Level 2: Sub-Systems -->
-  <tr>
-    <!-- Entities -->
-    <td align="center" valign="top" width="33%">
-        <kbd><strong>Snake</strong></kbd><br>
-        <sub>Base Entity</sub><br>
-        <span style="font-size: 20px;">⬇️</span><br>
-        <br>
-        <table border="0">
-            <tr>
-                <td align="center"><kbd>Player<br>Snake</kbd></td>
-                <td align="center"><kbd>Computer<br>Snake</kbd></td>
-            </tr>
-        </table>
-    </td>
-
-    <!-- Items -->
-    <td align="center" valign="top" width="33%">
-        <kbd><strong>Food</strong></kbd><br>
-        <sub>Item System</sub><br>
-        <span style="font-size: 20px;">⬇️</span><br>
-        <br>
-        <kbd>Small</kbd> <kbd>Medium</kbd> <kbd>Large</kbd>
-    </td>
-
-    <!-- AI -->
-    <td align="center" valign="top" width="33%">
-        <kbd><strong>QLearningAgent</strong></kbd><br>
-        <sub>AI Brain</sub><br>
-        <br>
-        <div align="left">
-        <small>
-        • Q-Table<br>
-        • Epsilon-Greedy<br>
-        • Bellman Eq.
-        </small>
-        </div>
-    </td>
-  </tr>
+        <!-- Food Branch -->
+        <td valign="top" align="center">
+            <div style="border: 1px solid #999; border-radius: 5px; background: #fff2cc; color: #333; width: 220px; text-align: left; overflow: hidden;">
+                <div style="background: #ffd966; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #999;">Food</div>
+                <div style="padding: 10px; font-size: 12px; line-height: 1.5;">
+                    + x, y: int<br>
+                    + type: str<br>
+                    + growthValue: int<br>
+                    <hr style="border: 0; border-top: 1px solid #ccc; margin: 5px 0;">
+                    + draw()
+                </div>
+            </div>
+            <div style="font-size: 20px; color: #666;">▲</div>
+             <!-- Food Subclasses as a simple list block -->
+            <div style="border: 1px dashed #999; border-radius: 5px; background: #fff2cc; color: #666; width: 200px; padding: 5px; font-size: 11px;">
+                Subclasses:<br>
+                SmallFood, MediumFood, LargeFood
+            </div>
+        </td>
+    </tr>
+    
+    <!-- Third Branch: Agent (Connected to GAME somewhat separately in layout but logic wise it's a part) -->
+    <tr>
+        <td colspan="4" align="center" style="padding-top: 20px;">
+             <div style="font-size: 20px; color: #666;">| integrates |</div>
+             <div style="border: 1px solid #999; border-radius: 5px; background: #e1d5e7; color: #333; width: 280px; text-align: left; overflow: hidden;">
+                <div style="background: #b4a7d6; padding: 5px; text-align: center; font-weight: bold; border-bottom: 1px solid #999;">QLearningAgent</div>
+                <div style="padding: 10px; font-size: 12px; line-height: 1.5;">
+                    + qTable: dict<br>
+                    + epsilon: float<br>
+                    + lr: float<br>
+                    <hr style="border: 0; border-top: 1px solid #ccc; margin: 5px 0;">
+                    + getQValue(state, action)<br>
+                    + chooseAction(state)<br>
+                    + learn(state, action, reward, next)
+                </div>
+            </div>
+        </td>
+    </tr>
 </table>
-
 </div>
 
 ## Installation
