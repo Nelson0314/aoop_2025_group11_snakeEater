@@ -140,73 +140,6 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-<div align="center">
-  <img src="https://www.plantuml.com/plantuml/png/RLHDRnCn4BtdL_ZOq4P275TLrKtuKAL4K0BbW11orfDTArxFClQI1kX_PsnliquWbymyZz-yUPxardb9lc_DnEsqxIJ9LbH6EbTwJthJUxYhqAxrBn0liv8MBLODOGjYAus3xAYJrKxMiFO70uAWyjBM9YzmZLIurxOUhZPQWQWqLLnrhaBydWZ-p9cp9kojMg114byQxI6Ub4IuJ-3SS5KgHr90EVeqcII-T-NgJIIzR5518Poda3WhT-0AiTJEXtoBgCQCnx6-4FTBa6HPU1doU0tyv-vY6iA-Kz93YXN9VOgg1geT2p7QQRIC7OMiGyUaP8Fga9fz_SX-VGkO0LlxfX1wQ5GXmJ5JElZAX8Luu03fLHhevp_zsRGXOgdVWxcvXWz67e169TVN2H4Bj9xGk9kRSRJNpqtdXnNs3dAY1ROThye9LNdtJ6D09QAu2ONO6fHfAi-yxmqxxVlEX0Uzx82sI6qPErt8-3NzZuYy-rj-hEJauz6Ymp7oXsvyv-27RnwawJCtarlZoxJIcC0vv2jGkcypO2cfXfWFmEbY92a_FibD65RfAdQ1pcaJNkmulQ4igS7VHraNqPGhaOrUDOWE1alYyJIj23SzBR_Y7znUaheI5XxvlLCjJnRN_iLiDgnT8LffUQlTU11DFCDdivlpsQ9hK1CJkqaYk_x3rxDLok6JnPZ47X4VFHwnpESHpBo-1QluZ-el" alt="Class Diagram" width="100%"/>
-</div>
-
-## Installation
-
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/Nelson0314/aoop_2025_group11_snakeEater.git
-    cd aoop_2025_group11_snakeEater
-    ```
-
-2.  Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## Usage
-
-### Play Mode
-To play the game against AI opponents:
-```bash
-python main.py
-```
-*   **Controls**: 
-    *   **Mouse Move**: Steer your snake.
-    *   **Mouse Left Click (Hold)**: Boost speed (Consumes score/length).
-*   **Goal**: Eat food to grow, avoid walls and other snakes. Cut off opponents to kill them.
-
-![Play Mode](docs/main.png)
-
-### Spectator / Training Mode
-To watch the AI training process:
-```bash
-python learn.py
-```
-*   **Controls**:
-    *   `A` / `D`: Switch between different AI snakes to spectate.
-    *   `G`: Toggle "God View" to see the entire map.
-
-### Simple Learning Demo (4-State)
-A simplified version of the AI for educational demonstration, using a 4-bit state vector.
-```bash
-python simple_learn.py
-```
-*   **Purpose**: Demonstrates the core Q-Learning concept with minimal complexity (Danger Front, Food Direction).
-*   **Visuals**: Includes full game rendering and camera controls (`G`, `A`, `D`).
-
-### Strategy Pattern Demo
-Demonstrates the separation of "Brain" (Strategy) from "Body" (Snake) using Object-Oriented Design.
-```bash
-python strategy_demo.py
-```
-*   **Red Snake**: Random Strategy (Dumb).
-*   **Blue Snake**: Simple AI Strategy (4-State Learning).
-*   **Green Snake**: Advanced AI Strategy (12-State Learning).
-
-### Local 2-Player Mode
-Play with a friend on the same keyboard!
-```bash
-python main_2p.py
-```
-*   **Player 1 (Green)**: WASD + Space (Boost)
-*   **Player 2 (Blue)**: Arrow Keys + Right Shift (Boost)
-
-## Class Structure (Mermaid)
-
 ```mermaid
 classDiagram
     direction TB
@@ -290,6 +223,63 @@ classDiagram
     strategy_demo ..> StrategyGAME : Launches
     simple_learn ..> SimpleGAME : Launches
 ```
+
+## Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/Nelson0314/aoop_2025_group11_snakeEater.git
+    cd aoop_2025_group11_snakeEater
+    ```
+
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Usage
+
+### Play Mode
+To play the game against AI opponents:
+```bash
+python main.py
+```
+*   **Controls**: 
+    *   **Mouse Move**: Steer your snake.
+    *   **Mouse Left Click (Hold)**: Boost speed (Consumes score/length).
+*   **Goal**: Eat food to grow, avoid walls and other snakes. Cut off opponents to kill them.
+
+![Play Mode](docs/main.png)
+
+### Spectator / Training Mode
+To watch the AI training process:
+```bash
+python learn.py
+```
+*   **Controls**:
+    *   `A` / `D`: Switch between different AI snakes to spectate.
+    *   `G`: Toggle "God View" to see the entire map.
+
+![Spectator Mode](docs/learn.png)
+
+### Simple Learning Demo (4-State)
+A simplified version of the AI for educational demonstration, using a 4-bit state vector.
+```bash
+python simple_learn.py
+```
+*   **Purpose**: Demonstrates the core Q-Learning concept with minimal complexity (Danger Front, Food Direction).
+*   **Visuals**: Includes full game rendering and camera controls (`G`, `A`, `D`).
+
+### Strategy Pattern Demo
+Demonstrates the separation of "Brain" (Strategy) from "Body" (Snake) using Object-Oriented Design.
+```bash
+python strategy_demo.py
+```
+*   **Red Snake**: Random Strategy (Dumb).
+*   **Blue Snake**: Simple AI Strategy (4-State Learning).
+*   **Green Snake**: Advanced AI Strategy (12-State Learning).
+
+
 
 
 ## Credits
