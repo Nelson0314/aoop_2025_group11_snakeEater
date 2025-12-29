@@ -11,8 +11,8 @@ def getState(snake, snakes, foods, mapWidth, mapHeight, spatialGrid=None):
     head = snake.body[0]
     
     # 1. Look-ahead points for danger detection
-    # 1. Look-ahead points for danger detection (Dynamic Vision: 5 * Diameter = 10 * Radius)
-    vision_dist = snake.radius * 10
+    # 1. Look-ahead points for danger detection (Increased vision for reaction)
+    vision_dist = 120 # Fixed large vision distance (was snake.radius * 10)
     pointL = pygame.Vector2(head.centerx, head.centery) + snake.direction.rotate(-45) * vision_dist
     pointF = pygame.Vector2(head.centerx, head.centery) + snake.direction * vision_dist
     pointR = pygame.Vector2(head.centerx, head.centery) + snake.direction.rotate(45) * vision_dist

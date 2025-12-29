@@ -110,7 +110,28 @@ class Snake():
              rect = rotated_head.get_rect(center=(screenCenterX, screenCenterY))
              screen.blit(rotated_head, rect)
         else:
+             # Basic Head (Color Circle)
              pygame.draw.circle(screen, self.color, (screenCenterX, screenCenterY), radius, 0)
+             
+             # Draw Eyes (Simple) to give them a face
+             # Calculate eye positions based on direction/angle
+             angle = math.atan2(-self.direction.y, self.direction.x)
+             
+             # Eye offset (forward and slightly apart)
+             eye_offset_dist = radius * 0.6
+             eye_spacing = radius * 0.4
+             
+             # Left Eye
+             lx = screenCenterX + math.cos(angle - 0.5) * eye_offset_dist
+             ly = screenCenterY - math.sin(angle - 0.5) * eye_offset_dist
+             pygame.draw.circle(screen, (255, 255, 255), (int(lx), int(ly)), int(radius * 0.3))
+             pygame.draw.circle(screen, (0, 0, 0), (int(lx), int(ly)), int(radius * 0.15)) # Pupil
+
+             # Right Eye
+             rx = screenCenterX + math.cos(angle + 0.5) * eye_offset_dist
+             ry = screenCenterY - math.sin(angle + 0.5) * eye_offset_dist
+             pygame.draw.circle(screen, (255, 255, 255), (int(rx), int(ry)), int(radius * 0.3))
+             pygame.draw.circle(screen, (0, 0, 0), (int(rx), int(ry)), int(radius * 0.15)) # Pupil
 
     def grow(self, amount):
         self.score += amount

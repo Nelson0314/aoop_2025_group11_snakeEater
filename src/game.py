@@ -16,7 +16,7 @@ from .spatial import SpatialGrid
 class GAME():
     def __init__(self, screen, mode='play', clock=None):
         self.screen = screen
-        self.mode = mode # 'play' or 'learn'
+        self.mode = mode # 'play', 'learn', '2player'
         self.clock = clock
         
         self.snakes = []
@@ -606,6 +606,7 @@ class GAME():
         self.screen.blit(titleText, titleRect)
         
         # Restart 提示
+        hintText = self.font.render("Press R to Restart", True, WHITE)
         hintRect = hintText.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20))
         self.screen.blit(hintText, hintRect)
 
