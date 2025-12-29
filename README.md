@@ -180,7 +180,116 @@ python learn.py
     *   `A` / `D`: Switch between different AI snakes to spectate.
     *   `G`: Toggle "God View" to see the entire map.
 
-![Spectator Mode](docs/learn.png)
+### Simple Learning Demo (4-State)
+A simplified version of the AI for educational demonstration, using a 4-bit state vector.
+```bash
+python simple_learn.py
+```
+*   **Purpose**: Demonstrates the core Q-Learning concept with minimal complexity (Danger Front, Food Direction).
+*   **Visuals**: Includes full game rendering and camera controls (`G`, `A`, `D`).
+
+### Strategy Pattern Demo
+Demonstrates the separation of "Brain" (Strategy) from "Body" (Snake) using Object-Oriented Design.
+```bash
+python strategy_demo.py
+```
+*   **Red Snake**: Random Strategy (Dumb).
+*   **Blue Snake**: Simple AI Strategy (4-State Learning).
+*   **Green Snake**: Advanced AI Strategy (12-State Learning).
+
+### Local 2-Player Mode
+Play with a friend on the same keyboard!
+```bash
+python main_2p.py
+```
+*   **Player 1 (Green)**: WASD + Space (Boost)
+*   **Player 2 (Blue)**: Arrow Keys + Right Shift (Boost)
+
+## Class Structure (Mermaid)
+
+```mermaid
+classDiagram
+    direction TB
+
+    %% Core Game Loop
+    class GAME {
+        +init(screen, mode)
+        +handleEvent()
+        +update()
+        +draw()
+        +checkCollision(snake)
+        +checkDeaths()
+    }
+
+    class SimpleGAME {
+        +update()
+        +Simple Update Logic
+    }
+    GAME <|-- SimpleGAME : Inheritance
+
+    class StrategyGAME {
+        +spawn_strategy_snakes()
+    }
+    GAME <|-- StrategyGAME : Inheritance
+
+    %% Entities
+    class Snake {
+        +move()
+        +draw()
+        +grow()
+    }
+    
+    class ComputerSnake {
+        +chooseAction(state)
+    }
+    Snake <|-- ComputerSnake
+
+    class playerSnake {
+        +updateDirectionByMouse()
+    }
+    Snake <|-- playerSnake
+    
+    class KeyboardSnake {
+        +updateDirectionByKeys()
+    }
+    Snake <|-- KeyboardSnake
+
+    %% Strategy Pattern
+    class SnakeStrategy {
+        <<interface>>
+        +decide_action(snake, context)
+    }
+    class RandomStrategy
+    class SimpleAIStrategy
+    class AdvancedAIStrategy
+    
+    SnakeStrategy <|.. RandomStrategy : Implements
+    SnakeStrategy <|.. SimpleAIStrategy : Implements
+    SnakeStrategy <|.. AdvancedAIStrategy : Implements
+    ComputerSnake o-- SnakeStrategy : Aggregation (Strategy)
+
+    %% ML Components
+    class QLearningAgent {
+        +get_q_value(state, action)
+        +chooseAction(state)
+        +learn(state, action, reward, next_state)
+    }
+    
+    class SimpleQLearningAgent
+    QLearningAgent <|-- SimpleQLearningAgent
+
+    %% Helpers
+    class SpatialGrid {
+        +insert(snake)
+        +get_potential_colliders(rect)
+    }
+    GAME o-- SpatialGrid : Composition
+    
+    %% Relationships
+    GAME *-- Snake : Manages
+    strategy_demo ..> StrategyGAME : Launches
+    simple_learn ..> SimpleGAME : Launches
+```
 
 
 ## Credits

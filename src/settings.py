@@ -9,9 +9,9 @@ WHITE = (255, 255, 255)
 GRAY = (100, 100, 100)
 # 1. 數量限制 (地圖上同時存在的數量)
 FOOD_COUNTS = {
-    'small': 500,   # Reduced from 700
-    'medium': 150,  # Reduced from 250
-    'large': 50     # Reduced from 100
+    'small': 450,   # Reduced from 700
+    'medium': 100,  # Reduced from 250
+    'large': 30     # Reduced from 100
 }
 
 # 2. 增加長度 (吃到後蛇變長幾格)
