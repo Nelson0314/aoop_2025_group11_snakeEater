@@ -140,91 +140,11 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-```plantuml
-@startuml
-    ' Layout settings
-    skinparam classAttributeIconSize 0
-    top to bottom direction
+## Class Structure
 
-    ' Core Game Loop
-    class GAME {
-        +init(screen, mode)
-        +handleEvent()
-        +update()
-        +draw()
-        +checkCollision(snake)
-        +checkDeaths()
-    }
-
-    class SimpleGAME {
-        +update()
-        +Simple Update Logic
-    }
-    GAME <|-- SimpleGAME : Inheritance
-
-    class StrategyGAME {
-        +spawn_strategy_snakes()
-    }
-    GAME <|-- StrategyGAME : Inheritance
-
-    ' Entities
-    class Snake {
-        +move()
-        +draw()
-        +grow()
-    }
-    
-    class ComputerSnake {
-        +chooseAction(state)
-    }
-    Snake <|-- ComputerSnake
-
-    class playerSnake {
-        +updateDirectionByMouse()
-    }
-    Snake <|-- playerSnake
-    
-    class KeyboardSnake {
-        +updateDirectionByKeys()
-    }
-    Snake <|-- KeyboardSnake
-
-    ' Strategy Pattern
-    interface SnakeStrategy {
-        +decide_action(snake, context)
-    }
-    class RandomStrategy
-    class SimpleAIStrategy
-    class AdvancedAIStrategy
-    
-    SnakeStrategy <|.. RandomStrategy : Implements
-    SnakeStrategy <|.. SimpleAIStrategy : Implements
-    SnakeStrategy <|.. AdvancedAIStrategy : Implements
-    ComputerSnake o-- SnakeStrategy : Aggregation (Strategy)
-
-    ' ML Components
-    class QLearningAgent {
-        +get_q_value(state, action)
-        +chooseAction(state)
-        +learn(state, action, reward, next_state)
-    }
-    
-    class SimpleQLearningAgent
-    QLearningAgent <|-- SimpleQLearningAgent
-
-    ' Helpers
-    class SpatialGrid {
-        +insert(snake)
-        +get_potential_colliders(rect)
-    }
-    GAME o-- SpatialGrid : Composition
-    
-    ' Relationships
-    GAME *-- Snake : Manages
-    strategy_demo ..> StrategyGAME : Launches
-    simple_learn ..> SimpleGAME : Launches
-@enduml
-```
+<div align="center">
+  <img src="https://www.plantuml.com/plantuml/png/XPJDRzim48JlUOgXfAP2C27rKe1aAKQ2e12e12IafLTAreHGlQsTfW-iWvnlioeWbSlxthUPxapdN9lc_3nEstxIJRJaT6EbTwJdhJUxYhqAxpBf0lix9MBLGDOOjYAus3yAIIrKxMiFO70uAWyjBMrYzmZLIurxOUhZPQXQWqLLnrhaBydWZ-p9cp9kojMg114b0QZI4Ub4IuJ-3TS5KgHr12EVeqcII-V0NgJIIzh551uPode3chS-0AsTJEXtoBwCQCnQ6-n4HTBa6HPU1doU0tyr-nY6eA-Kz93YXN9VOgg1gdT2p7QKRICrOMjGyUaP8Fga9f_9SX-VGkO0LlxfX1wQ5GXmF5JElZEX9Lua01fLHhevp_tsRGXOgdVWxcvVWz67e169TVR2I4Bj1zGkLkRSRJOpstdXjNsjdAY1ROThqe9LNdtx6D09QAu2OPK6PHfAi-yxmjxhVlEX0Uzx02sI6qPErp4-1NzbuYi-rj-hEJauz6Ymp5oXsvyr-2zRnwaxICbarlZowHMcC0vrymGgcypG2efTWFmCbY9qa_FhbD25RfUdQ3ZcaJNkmulQ4igC7VHraNqPGhaOfUDWWA1alYyJIj23SzBh_I7jiUahcI5XxvlLCjJnRN_SLiDonTwLffUQlTU11DFCDdivlpsQ0hK1CJkwZYk_x3rxDLok6JnvZ47X0VFHwnpEUHoBo-lQkuJ-Wl" alt="Class Diagram" width="100%"/>
+</div>
 
 ## Installation
 
