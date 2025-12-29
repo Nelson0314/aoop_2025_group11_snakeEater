@@ -37,56 +37,41 @@ graph TD
     class H update
 ```
 
-### State Representation & Action Space
+### State Representation
 
-The agent perceives the environment through a **12-bit state vector** and chooses from **6 discrete actions**.
+The agent perceives the environment through a **12-bit state vector** tuple:
 
-```mermaid
-graph TD
-    classDef sensor fill:#e2f0d9,stroke:#a9d08e,color:#333;
-    classDef state fill:#deebf7,stroke:#9bc2e6,color:#333;
-    classDef ai fill:#e1d5e7,stroke:#b4a7d6,color:#333;
-    classDef action fill:#fff2cc,stroke:#ffd966,color:#333;
+| Index | Feature | Description |
+| :---: | :--- | :--- |
+| **0** | **Danger Forward** | Collision risk ahead within vision range. |
+| **1** | **Danger Right** | Collision risk to the relative right. |
+| **2** | **Danger Left** | Collision risk to the relative left. |
+| **3** | **Direction Left** | Moving West currently. |
+| **4** | **Direction Right** | Moving East currently. |
+| **5** | **Direction Up** | Moving North currently. |
+| **6** | **Direction Down** | Moving South currently. |
+| **7** | **Food Left** | Closest food is to the West. |
+| **8** | **Food Right** | Closest food is to the East. |
+| **9** | **Food Up** | Closest food is to the North. |
+| **10** | **Food Down** | Closest food is to the South. |
+| **11** | **Combat Aware** | Enemy head detected near strategic body segments (Cut-off risk). |
 
-    subgraph Sensors ["1. Environmental Sensors"]
-        Vis["Vision: 3 pts"]
-        Food["Food Sensor"]
-        Combat["Combat Awareness"]
-        CurrDir["Current Direction"]
-    end
+### Action Space
 
-    subgraph StateVec ["2. State Vector (12 Bits)"]
-        S1["Danger (3)"]
-        S2["Direction (4)"]
-        S3["Food Loc (4)"]
-        S4["Combat (1)"]
-    end
+The agent chooses from **6 discrete actions** at each step:
 
-    subgraph Intelligence ["3. Q-Learning Core"]
-        QTable["Q-Table Lookup"]
-    end
+| ID | Action | Effect |
+| :---: | :--- | :--- |
+| **0** | **Straight** | Maintain current direction. |
+| **1** | **Turn Left** | Rotate angle counter-clockwise. |
+| **2** | **Turn Right** | Rotate angle clockwise. |
+| **3** | **Boost Straight** | Accelerate forward (Consumes score). |
+| **4** | **Boost Left** | Accelerate and turn left. |
+| **5** | **Boost Right** | Accelerate and turn right. |
 
-    subgraph Act ["4. Chosen Action"]
-        Actions["Action Space (6)"]
-    end
-
-    Vis --> S1
-    CurrDir --> S2
-    Food --> S3
-    Combat --> S4
-
-    S1 --> QTable
-    S2 --> QTable
-    S3 --> QTable
-    S4 --> QTable
-
-    QTable --> Actions
-
-    class Vis,Food,Combat,CurrDir sensor;
-    class S1,S2,S3,S4 state;
-    class QTable ai;
-    class Actions action;
-```
+<div align="center">
+  <img src="https://mermaid.ink/img/eyJjb2RlIjogImdyYXBoIFREXG4gICAgY2xhc3NEZWYgc2Vuc29yIGZpbGw6I2UyZjBkOSxzdHJva2U6I2E5ZDA4ZSxjb2xvcjojMzMzO1xuICAgIGNsYXNzRGVmIHN0YXRlIGZpbGw6I2RlZWJmNyxzdHJva2U6IzliYzJlNixjb2xvcjojMzMzO1xuICAgIGNsYXNzRGVmIGFpIGZpbGw6I2UxZDVlNyxzdHJva2U6I2I0YTdkNixjb2xvcjojMzMzO1xuICAgIGNsYXNzRGVmIGFjdGlvbiBmaWxsOiNmZmYyY2Msc3Ryb2tlOiNmZmQ5NjYsY29sb3I6IzMzMztcblxuICAgIHN1YmdyYXBoIFNlbnNvcnMgWzEuIEVudmlyb25tZW50YWwgU2Vuc29yc11cbiAgICAgICAgVmlzW1Zpc2lvbjogMyBwdHNdXG4gICAgICAgIEZvb2RbRm9vZCBTZW5zb3JdXG4gICAgICAgIENvbWJhdFtDb21iYXQgQXdhcmVuZXNzXVxuICAgICAgICBDdXJyRGlyW0N1cnJlbnQgRGlyZWN0aW9uXVxuICAgIGVuZFxuXG4gICAgc3ViZ3JhcGggU3RhdGVWZWMgWzIuIFN0YXRlIFZlY3RvciAoMTIgQml0cyldXG4gICAgICAgIFMxW0RhbmdlciAoMyldXG4gICAgICAgIFMyW0RpcmVjdGlvbiAoNCldXG4gICAgICAgIFMzW0Zvb2QgTG9jICg0KV1cbiAgICAgICAgUzRbQ29tYmF0ICgxKV1cbiAgICBlbmRcblxuICAgIHN1YmdyYXBoIEludGVsbGlnZW5jZSBbMy4gUS1MZWFybmluZyBDb3JlXVxuICAgICAgICBRVGFibGVbUS1UYWJsZSBMb29rdXBdXG4gICAgZW5kXG5cbiAgICBzdWJncmFwaCBBY3QgWzQuIENob3NlbiBBY3Rpb25dXG4gICAgICAgIEFjdGlvbnNbQWN0aW9uIFNwYWNlICg2KV1cbiAgICBlbmRcblxuICAgIFZpcyAtLT4gUzFcbiAgICBDdXJyRGlyIC0tPiBTMlxuICAgIEZvb2QgLS0-IFMzXG4gICAgQ29tYmF0IC0tPiBTNFxuXG4gICAgUzEgLS0-IFFUYWJsZVxuICAgIFMyIC0tPiBRVGFibGVcbiAgICBTMyAtLT4gUVRhYmxlXG4gICAgUzQgLS0-IFFUYWJsZVxuXG4gICAgUVRhYmxlIC0tPiBBY3Rpb25zXG5cbiAgICBjbGFzcyBWaXMsRm9vZCxDb21iYXQsQ3VyckRpciBzZW5zb3I7XG4gICAgY2xhc3MgUzEsUzIsUzMsUzQgc3RhdGU7XG4gICAgY2xhc3MgUVRhYmxlIGFpO1xuICAgIGNsYXNzIEFjdGlvbnMgYWN0aW9uOyIsICJtZXJtYWlkIjogeyJ0aGVtZSI6ICJkZWZhdWx0In19" alt="State Diagram" width="100%"/>
+</div>
 
 ## Features
 
