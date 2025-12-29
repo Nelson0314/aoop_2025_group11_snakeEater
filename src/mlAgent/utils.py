@@ -3,7 +3,7 @@ import pygame
 from . import config
 from ..settings import TILE_SIZE
 
-def getState(snake, snakes, foods, mapWidth, mapHeight):
+def getState(snake, snakes, foods, mapWidth, mapHeight, spatialGrid=None):
     """
     Extracts a discrete state from the game environment for the Q-learning agent.
     Returns a tuple representing the state.
@@ -21,14 +21,32 @@ def getState(snake, snakes, foods, mapWidth, mapHeight):
         # Wall collision
         if pt.x < 0 or pt.x > mapWidth or pt.y < 0 or pt.y > mapHeight:
             return True
-        # Snake collision (check all OTHER snakes)
-        # Check against all bodies of all other snakes
-        for other in snakes:
-            if other == snake: continue
-            for part in other.body:
-                dist = math.sqrt((pt.x - part.centerx)**2 + (pt.y - part.centery)**2)
-                if dist < snake.radius + other.radius: # Simple radius check
+        
+        # Snake collision
+        # If Spatial Grid is available, use it
+        if spatialGrid:
+            # Create a small query rect at the point
+            # We want to check if a "virtual head" at 'pt' collides with anything
+            # The collision condition is dist < snake.radius + other.radius
+            # So we query for things near 'pt'
+            query_rect = pygame.Rect(int(pt.x - 5), int(pt.y - 5), 10, 10)
+            candidates = spatialGrid.get_potential_colliders(query_rect, search_radius_cells=1)
+            
+            for other, part in candidates:
+                if other == snake: continue
+                # Euclidean distance check
+                dist_sq = (pt.x - part.centerx)**2 + (pt.y - part.centery)**2
+                check_radius = snake.radius + other.radius
+                if dist_sq < check_radius**2:
                     return True
+        else:
+            # Fallback: Check against all bodies of all other snakes
+            for other in snakes:
+                if other == snake: continue
+                for part in other.body:
+                    dist = math.sqrt((pt.x - part.centerx)**2 + (pt.y - part.centery)**2)
+                    if dist < snake.radius + other.radius: # Simple radius check
+                        return True
         return False
 
     dangerL = isCollision(pointL)

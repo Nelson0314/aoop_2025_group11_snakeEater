@@ -11,6 +11,8 @@ from .food import Food, SmallFood, MediumFood, LargeFood
 import math
 import datetime
 
+from .spatial import SpatialGrid
+
 class GAME():
     def __init__(self, screen, mode='play', clock=None):
         self.screen = screen
@@ -38,9 +40,14 @@ class GAME():
              self.agent.loadModel()
 
         # Spectator / Camera Settings
-        self.spectatorSnake = None # The specific snake instance to follow
         self.cameraMode = 'follow' # 'follow' or 'god'
         self.godViewZoom = 0.1 # Zoom level for God View (Seeing approx 1/3 of map)
+
+        # Optimization: Spatial Grid
+        # Use GRID_SIZE from settings (e.g. 300)
+        self.spatialGrid = SpatialGrid(MAP_WIDTH, MAP_HEIGHT, GRID_SIZE)
+
+        self.spectatorSnake = None # Restore missing attribute
 
         self.loadAssets()
         self.setUp()
@@ -198,12 +205,17 @@ class GAME():
             if self.frameCount % config.MODEL_SAVE_INTERVAL == 0:
                 self.agent.saveModel()
 
+        # Update Spatial Grid (Clear and Rebuild)
+        self.spatialGrid.clear()
+        for snake in self.snakes:
+            self.spatialGrid.insert(snake)
+
         for snake in self.snakes:
             if isinstance(snake, playerSnake):
                 snake.updateDirectionByMouse()
             elif isinstance(snake, ComputerSnake):
                 # RL: Observe State
-                snake.stateOld = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
+                snake.stateOld = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT, self.spatialGrid)
                 snake.scoreOld = snake.score
                 # RL: Choose Action
                 snake.action = self.agent.chooseAction(snake.stateOld)
@@ -276,7 +288,7 @@ class GAME():
                        head.centery <= r or head.centery >= MAP_HEIGHT - r:
                         reward += config.REWARD_WALL # Apply heavy penalty for hugging wall
 
-                    snake.stateNew = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT)
+                    snake.stateNew = getState(snake, self.snakes, self.food, MAP_WIDTH, MAP_HEIGHT, self.spatialGrid)
                     self.agent.learn(snake.stateOld, snake.action, reward, snake.stateNew)
 
     def checkCollision(self, snake):
@@ -408,40 +420,39 @@ class GAME():
     def getKiller(self, snake):
         # 檢查 snake 是否撞到 OTHER snakes 的 body
         # 回傳造成撞擊的蛇 (killer)，如果沒撞到或是撞牆則回傳 True (代表死但無兇手) 或 None (活著)
-        # 為了相容邏輯：
-        # Return snake instance: Killed by snake
-        # Return True: Killed by wall
-        # Return False/None: Alive
         
+        # USE SPATIAL GRID FOR QUERY
         headRadius = snake.radius
-        headX = snake.head.centerx
-        headY = snake.head.centery
+        headRect = snake.head
+        
+        # Query potential colliders from grid
+        # Search radius 1 cell is likely enough if cell size is reasonable (e.g. 300)
+        candidates = self.spatialGrid.get_potential_colliders(headRect, search_radius_cells=1)
+        
+        check_radius_sq_cache = {} # Cache radius calculations to avoid recalculating for same snake
 
-        # 1. 檢查牆壁 (Remove death check, allow sliding)
-        # Position is clamped in snake.move(), so we don't need to kill them here.
-        # Wall penalty is applied in update() loop for RL.
-        # if headX < headRadius or headX > MAP_WIDTH - headRadius or \
-        #    headY < headRadius or headY > MAP_HEIGHT - headRadius:
-        #     return True # Killed by Wall
-
-        # 2. 檢查其他蛇
-        for otherSnake in self.snakes:
+        for otherSnake, bodyPart in candidates:
             if otherSnake == snake:
                 continue
             
-            # 遍歷對方的身體
-            # Optimization: Quick bounding box check for the whole snake first?
-            # Or just squared distance
+            # Get cached radius sum
+            if otherSnake not in check_radius_sq_cache:
+                r_sum = snake.radius + otherSnake.radius
+                check_radius_sq_cache[otherSnake] = r_sum * r_sum
             
-            for bodyPart in otherSnake.body:
-                dx = headX - bodyPart.centerx
-                dy = headY - bodyPart.centery
-                dist_sq = dx**2 + dy**2
-                
-                check_radius = snake.radius + otherSnake.radius
-                if dist_sq < check_radius**2:
-                    return otherSnake # Killed by otherSnake
-        
+            limit_sq = check_radius_sq_cache[otherSnake]
+
+            # Fast Euclidean check
+            dx = headRect.centerx - bodyPart.centerx
+            dy = headRect.centery - bodyPart.centery
+            # Quick AABB check first? No, pure math might be faster in python than function calls
+            # If dx > r_sum continue... optimized check:
+            # if abs(dx) > r_sum or abs(dy) > r_sum: continue
+            
+            dist_sq = dx*dx + dy*dy
+            if dist_sq < limit_sq:
+                return otherSnake
+
         return None # Alive
 
     def killSnake(self, snake):
