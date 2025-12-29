@@ -58,6 +58,19 @@ class Snake():
         radius = int(self.radius * zoom)
         if radius < 1: radius = 1
         
+        # Prepare Glow Surface if boosting
+        glow_surf = None
+        if self.isBoosting:
+            glow_radius = int(radius * 1.5)
+            glow_size = glow_radius * 2
+            glow_surf = pygame.Surface((glow_size, glow_size), pygame.SRCALPHA)
+            
+            # Draw a soft white glow
+            # Outer ring (fainter)
+            pygame.draw.circle(glow_surf, (255, 255, 255, 40), (glow_radius, glow_radius), glow_radius)
+            # Inner ring (brighter)
+            pygame.draw.circle(glow_surf, (255, 255, 255, 80), (glow_radius, glow_radius), int(glow_radius * 0.6))
+
         # Draw Body (Reverse order so tail is below neck)
         # Iterate from last element down to index 1
         for i in range(len(self.body) - 1, 0, -1):
@@ -68,6 +81,11 @@ class Snake():
             screenCenterX = int(screenX)
             screenCenterY = int(screenY)
             
+            # Draw Glow
+            if glow_surf:
+                glow_rect = glow_surf.get_rect(center=(screenCenterX, screenCenterY))
+                screen.blit(glow_surf, glow_rect)
+
             if hasattr(self, 'body_img') and self.body_img:
                 scaled_size = int(radius * 2) # Diameter
                 scaled_img = pygame.transform.scale(self.body_img, (scaled_size, scaled_size))
