@@ -186,17 +186,13 @@ python learn.py
 
 ### Simple Learning Demo (4-State)
 A simplified version of the AI for educational demonstration, using a 4-bit state vector.
-```bash
-python simple_learn.py
-```
+
 *   **Purpose**: Demonstrates the core Q-Learning concept with minimal complexity (Danger Front, Food Direction).
 *   **Visuals**: Includes full game rendering and camera controls (`G`, `A`, `D`).
 
 ### Strategy Pattern Demo
 Demonstrates the separation of "Brain" (Strategy) from "Body" (Snake) using Object-Oriented Design.
-```bash
-python strategy_demo.py
-```
+
 *   **Red Snake**: Random Strategy (Dumb).
 *   **Blue Snake**: Simple AI Strategy (4-State Learning).
 *   **Green Snake**: Advanced AI Strategy (12-State Learning).
