@@ -22,7 +22,7 @@ MODEL_SAVE_INTERVAL = 600 # Save the Q-table every N frames
 # Get the directory where this config.py file is located (src/mlAgent)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_SAVE_FILE = os.path.join(BASE_DIR, "qTable.pkl")
-MODEL_LOAD_FILE = os.path.join(BASE_DIR, "qTable_trained.pkl")
+MODEL_LOAD_FILE = os.path.join(BASE_DIR, "qTable.pkl")
 
 # Action settings
 TURN_ANGLE = 15           # Degrees to turn left or right per action
