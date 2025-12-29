@@ -61,9 +61,105 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-<div align="center">
-  <img src="https://mermaid.ink/img/eyJjb2RlIjogImNsYXNzRGlhZ3JhbVxuICAgICUlIFN0eWxpbmcgLSBMb3cgU2F0dXJhdGlvbiAvIFBhc3RlbFxuICAgIGNsYXNzRGVmIGRlZmF1bHQgZmlsbDojZjlmOWY5LHN0cm9rZTojOTk5LHN0cm9rZS13aWR0aDoxcHgsY29sb3I6IzMzMztcbiAgICBjbGFzc0RlZiBjb3JlIGZpbGw6I2UyZjBkOSxzdHJva2U6I2E5ZDA4ZTtcbiAgICBjbGFzc0RlZiBlbnRpdHkgZmlsbDojZGVlYmY3LHN0cm9rZTojOWJjMmU2O1xuICAgIGNsYXNzRGVmIGl0ZW0gZmlsbDojZmZmMmNjLHN0cm9rZTojZmZkOTY2O1xuICAgIGNsYXNzRGVmIGFpIGZpbGw6I2UxZDVlNyxzdHJva2U6I2I0YTdkNjtcblxuICAgIGNsYXNzIEdBTUUge1xuICAgICAgICArbW9kZTogc3RyXG4gICAgICAgICtzbmFrZXM6IExpc3RcbiAgICAgICAgK2Zvb2Q6IExpc3RcbiAgICAgICAgK2FnZW50OiBRTGVhcm5pbmdBZ2VudFxuICAgICAgICArc2V0VXAoKVxuICAgICAgICArdXBkYXRlKClcbiAgICAgICAgK2RyYXcoKVxuICAgICAgICArY2hlY2tDb2xsaXNpb24oKVxuICAgIH1cbiAgICBcbiAgICBjbGFzcyBTbmFrZSB7XG4gICAgICAgICtib2R5OiBMaXN0W1JlY3RdXG4gICAgICAgICtsZW5ndGg6IGludFxuICAgICAgICArc2NvcmU6IGludFxuICAgICAgICArZGlyZWN0aW9uOiBWZWN0b3IyXG4gICAgICAgICttb3ZlKClcbiAgICAgICAgK2RyYXcoKVxuICAgICAgICArZ3JvdygpXG4gICAgICAgICtzZXRfc2tpbigpXG4gICAgfVxuICAgIFxuICAgIGNsYXNzIFBsYXllclNuYWtlIHtcbiAgICAgICAgPDxQbGF5ZXIgQ29udHJvbHM-PlxuICAgICAgICArdXBkYXRlRGlyZWN0aW9uQnlNb3VzZSgpXG4gICAgfVxuICAgIFxuICAgIGNsYXNzIENvbXB1dGVyU25ha2Uge1xuICAgICAgICA8PEFJIENvbnRyb2xsZWQ-PlxuICAgICAgICArYW5nbGU6IGZsb2F0XG4gICAgICAgICtzdGF0ZU9sZDogdHVwbGVcbiAgICAgICAgK3BlcmZvcm1BY3Rpb24oYWN0aW9uKVxuICAgICAgICArdXBkYXRlRGlyZWN0aW9uKClcbiAgICB9XG5cbiAgICBjbGFzcyBGb29kIHtcbiAgICAgICAgK3g6IGludFxuICAgICAgICAreTogaW50XG4gICAgICAgICt0eXBlOiBzdHJcbiAgICAgICAgK2dyb3d0aFZhbHVlOiBpbnRcbiAgICAgICAgK2RyYXcoKVxuICAgIH1cbiAgICBjbGFzcyBTbWFsbEZvb2RcbiAgICBjbGFzcyBNZWRpdW1Gb29kXG4gICAgY2xhc3MgTGFyZ2VGb29kXG4gICAgXG4gICAgY2xhc3MgUUxlYXJuaW5nQWdlbnQge1xuICAgICAgICArcVRhYmxlOiBkaWN0XG4gICAgICAgICtlcHNpbG9uOiBmbG9hdFxuICAgICAgICArbHI6IGZsb2F0XG4gICAgICAgICtnZXRRVmFsdWUoc3RhdGUsIGFjdGlvbilcbiAgICAgICAgK2Nob29zZUFjdGlvbihzdGF0ZSlcbiAgICAgICAgK2xlYXJuKHN0YXRlLCBhY3Rpb24sIHJld2FyZCwgbmV4dF9zdGF0ZSlcbiAgICB9XG5cbiAgICAlJSBSZWxhdGlvbnNoaXBzXG4gICAgR0FNRSAqLS0gU25ha2UgOiBtYW5hZ2VzXG4gICAgR0FNRSAqLS0gRm9vZCA6IG1hbmFnZXNcbiAgICBHQU1FIC0tPiBRTGVhcm5pbmdBZ2VudCA6IGludGVncmF0ZXNcbiAgICBTbmFrZSA8fC0tIFBsYXllclNuYWtlIDogaW5oZXJpdGFuY2VcbiAgICBTbmFrZSA8fC0tIENvbXB1dGVyU25ha2UgOiBpbmhlcml0YW5jZVxuICAgIEZvb2QgPHwtLSBTbWFsbEZvb2QgOiBpbmhlcml0YW5jZVxuICAgIEZvb2QgPHwtLSBNZWRpdW1Gb29kIDogaW5oZXJpdGFuY2VcbiAgICBGb29kIDx8LS0gTGFyZ2VGb29kIDogaW5oZXJpdGFuY2VcblxuICAgICUlIEFwcGx5aW5nIFN0eWxlc1xuICAgIGNsYXNzIEdBTUUgY29yZVxuICAgIGNsYXNzIFNuYWtlIGVudGl0eVxuICAgIGNsYXNzIFBsYXllclNuYWtlIGVudGl0eVxuICAgIGNsYXNzIENvbXB1dGVyU25ha2UgZW50aXR5XG4gICAgY2xhc3MgRm9vZCBpdGVtXG4gICAgY2xhc3MgU21hbGxGb29kIGl0ZW1cbiAgICBjbGFzcyBNZWRpdW1Gb29kIGl0ZW1cbiAgICBjbGFzcyBMYXJnZUZvb2QgaXRlbVxuICAgIGNsYXNzIFFMZWFybmluZ0FnZW50IGFpIiwgIm1lcm1haWQiOiB7InRoZW1lIjogImRlZmF1bHQifX0=" alt="Class Diagram" width="100%"/>
-</div>
+<table width="100%">
+  <tr>
+    <th width="25%">Core System</th>
+    <th width="30%">Entities</th>
+    <th width="20%">Items</th>
+    <th width="25%">Artificial Intelligence</th>
+  </tr>
+  <tr>
+    <!-- Core -->
+    <td valign="top">
+      <h3>GAME</h3>
+      <ul>
+        <li><b>Properties</b>
+            <ul>
+                <li><code>mode</code>: str</li>
+                <li><code>snakes</code>: List</li>
+                <li><code>food</code>: List</li>
+                <li><code>agent</code>: QLearningAgent</li>
+            </ul>
+        </li>
+        <li><b>Methods</b>
+            <ul>
+                <li><code>setUp()</code></li>
+                <li><code>update()</code></li>
+                <li><code>draw()</code></li>
+                <li><code>checkCollision()</code></li>
+            </ul>
+        </li>
+      </ul>
+    </td>
+    <!-- Entities -->
+    <td valign="top">
+      <h3>Snake</h3>
+      <sub>Base Class</sub>
+      <ul>
+        <li><code>body</code>: List[Rect]</li>
+        <li><code>length</code>: int</li>
+        <li><code>score</code>: int</li>
+        <li><code>direction</code>: Vector2</li>
+        <li><code>move()</code></li>
+        <li><code>draw()</code></li>
+      </ul>
+      <hr>
+      <h3>PlayerSnake</h3>
+      <sub>Inherits Snake</sub>
+      <ul>
+        <li><code>updateDirectionByMouse()</code></li>
+      </ul>
+      <hr>
+      <h3>ComputerSnake</h3>
+      <sub>Inherits Snake</sub>
+      <ul>
+        <li><code>angle</code>: float</li>
+        <li><code>stateOld</code>: tuple</li>
+        <li><code>performAction(action)</code></li>
+      </ul>
+    </td>
+    <!-- Items -->
+    <td valign="top">
+      <h3>Food</h3>
+      <ul>
+        <li><b>Properties</b>
+            <ul>
+                <li><code>x, y</code>: int</li>
+                <li><code>type</code>: str</li>
+                <li><code>growthValue</code>: int</li>
+            </ul>
+        </li>
+        <li><b>Subclasses</b>
+            <ul>
+                <li><code>SmallFood</code></li>
+                <li><code>MediumFood</code></li>
+                <li><code>LargeFood</code></li>
+            </ul>
+        </li>
+      </ul>
+    </td>
+    <!-- AI -->
+    <td valign="top">
+      <h3>QLearningAgent</h3>
+      <ul>
+        <li><b>Properties</b>
+            <ul>
+                <li><code>qTable</code>: dict</li>
+                <li><code>epsilon</code>: float</li>
+                <li><code>lr</code>: float</li>
+            </ul>
+        </li>
+        <li><b>Methods</b>
+            <ul>
+                <li><code>getQValue()</code></li>
+                <li><code>chooseAction()</code></li>
+                <li><code>learn()</code></li>
+            </ul>
+        </li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
 ## Installation
 
