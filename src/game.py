@@ -13,6 +13,17 @@ import datetime
 
 from .spatial import SpatialGrid
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 class GAME():
     def __init__(self, screen, mode='play', clock=None):
         self.screen = screen
@@ -56,18 +67,18 @@ class GAME():
         try:
             self.assets = {
                 'skins': [
-                    (pygame.image.load("assets/skin_green_head.png"), pygame.image.load("assets/skin_green_body.png")),
-                    (pygame.image.load("assets/skin_blue_head.png"), pygame.image.load("assets/skin_blue_body.png")),
-                    (pygame.image.load("assets/skin_red_head.png"), pygame.image.load("assets/skin_red_body.png"))
+                    (pygame.image.load(resource_path("assets/skin_green_head.png")), pygame.image.load(resource_path("assets/skin_green_body.png"))),
+                    (pygame.image.load(resource_path("assets/skin_blue_head.png")), pygame.image.load(resource_path("assets/skin_blue_body.png"))),
+                    (pygame.image.load(resource_path("assets/skin_red_head.png")), pygame.image.load(resource_path("assets/skin_red_body.png")))
                 ],
-                'grid': pygame.image.load("assets/grid_bg.png")
+                'grid': pygame.image.load(resource_path("assets/grid_bg.png"))
             }
         except FileNotFoundError:
             print("Assets not found. Please run generate_assets.py")
             self.assets = {'skins': [], 'grid': None}
 
         # Music
-        bgm_path = os.path.join("assets", "bgm.mp3")
+        bgm_path = resource_path(os.path.join("assets", "bgm.mp3"))
         if os.path.exists(bgm_path):
             try:
                 # pygame.mixer is initialized by pygame.init()
@@ -81,7 +92,7 @@ class GAME():
             print(f"No BGM found at {bgm_path}")
 
         # Sound Effects
-        eat_path = os.path.join("assets", "eat.mp3")
+        eat_path = resource_path(os.path.join("assets", "eat.mp3"))
         self.eat_sound = None
         if os.path.exists(eat_path):
             try:

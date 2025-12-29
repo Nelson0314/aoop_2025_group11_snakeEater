@@ -19,8 +19,14 @@ REWARD_BOOST_PENALTY = -0.05 # Penalty for using boost (score decrease)
 # Training settings
 MODEL_SAVE_INTERVAL = 600 # Save the Q-table every N frames
 
+import sys
+
 # Get the directory where this config.py file is located (src/mlAgent)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, 'frozen', False):
+    # If the application is frozen (compiled), use the directory of the executable
+    BASE_DIR = os.path.dirname(sys.executable)
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_SAVE_FILE = os.path.join(BASE_DIR, "qTable.pkl")
 MODEL_LOAD_FILE = os.path.join(BASE_DIR, "qTable.pkl")
 
