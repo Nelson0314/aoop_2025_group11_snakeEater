@@ -140,8 +140,6 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-## Class Structure
-
 <div align="center">
   <img src="docs/diagram.png" alt="Class Diagram" width="100%"/>
 </div>
