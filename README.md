@@ -43,6 +43,7 @@ graph TD
 *   **Spectator Mode**: Watch the AI learn and evolve in real-time (`learn.py`).
 *   **Visual Polish**: Custom textures for snakes and backgrounds, particle effects, and polished UI elements.
 *   **Audio Integration**: Background music and sound effects for immersive gameplay.
+*   **Optimization**: Implemented **Spatial Grid** system (`spatial.py`) for efficient collision detection, enabling high-performance training.
 
 ## Architecture
 
@@ -51,6 +52,7 @@ The project is organized into a modular structure to ensure maintainability and 
 *   **`src/`**: Core source code.
     *   **`game.py`**: Main game loop, rendering logic, and state management.
     *   **`snake.py`**: Snake entity logic, including movement and AI behavior.
+    *   **`spatial.py`**: Spatial grid implementation for optimized collision detection (O(N) performance).
     *   **`mlAgent/`**: Q-Learning implementation (`qAgent.py`, `config.py`).
 *   **`scripts/`**: Utility scripts for building executables and generating assets.
 *   **`assets/`**: Game resources including images and audio files.
@@ -182,6 +184,7 @@ python learn.py
     *   `G`: Toggle "God View" to see the entire map.
 
 ![Spectator Mode](docs/learn.png)
+
 
 ## Credits
 

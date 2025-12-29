@@ -22,8 +22,8 @@ FOOD_GROWTH = {
 }
 
 # 3. 加速設定 (Boost Settings)
-BOOST_SPEED = 12         # Base speed 7 vs Boost speed 12
-BOOST_COST = 0.1         # Score deduction per frame
+BOOST_SPEED = 6          # Base speed 3.5 vs Boost speed 6 (Halved for 60fps)
+BOOST_COST = 0.05        # Score deduction per frame (Halved for 60fps)
 MIN_SCORE_TO_BOOST = 10  # Minimum length/score to enable boost
 
 # 3. 視覺半徑 (畫在螢幕上的大小)

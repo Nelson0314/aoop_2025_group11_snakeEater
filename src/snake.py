@@ -10,7 +10,7 @@ class Snake():
         self.head = pygame.Rect(x, y, TILE_SIZE, TILE_SIZE)
         self.score = 0.0 # Float for boost decay
         self.direction = pygame.Vector2(1, 0)
-        self.base_speed = 7
+        self.base_speed = 3.5
         self.speed = self.base_speed
         self.isBoosting = False
         
@@ -223,7 +223,7 @@ class ComputerSnake(Snake):
     def __init__(self, x, y, color):
         super().__init__(x, y, color)
         self.angle = random.uniform(0, 360)
-        self.turn_speed = 15 # Degrees per frame
+        self.turn_speed = 7.5 # Degrees per frame
         
         # State tracking for RL
         self.stateOld = None
