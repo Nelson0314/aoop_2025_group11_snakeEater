@@ -103,6 +103,29 @@ class GAME():
                 player.set_skin(h, b)
             self.snakes.append(player)
 
+        elif self.mode == '2player':
+             # Import locally to avoid circular import if needed (though top-level import is fine)
+             from .snake import KeyboardSnake
+             
+             # P1: WASD (Green Skin)
+             p1_ctrl = {'left': pygame.K_a, 'right': pygame.K_d, 'boost': pygame.K_w}
+             x1 = MAP_WIDTH / 3
+             y1 = MAP_HEIGHT / 2
+             self.p1 = KeyboardSnake(x1, y1, (0, 255, 0), p1_ctrl)
+             if self.assets['skins']:
+                 self.p1.set_skin(self.assets['skins'][0][0], self.assets['skins'][0][1])
+             self.snakes.append(self.p1)
+             
+             # P2: Arrows (Blue Skin)
+             p2_ctrl = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'boost': pygame.K_UP}
+             x2 = 2 * MAP_WIDTH / 3
+             y2 = MAP_HEIGHT / 2
+             self.p2 = KeyboardSnake(x2, y2, (0, 100, 255), p2_ctrl)
+             if self.assets['skins']:
+                 # Use skin 1 (Blue)
+                 self.p2.set_skin(self.assets['skins'][1][0], self.assets['skins'][1][1])
+             self.snakes.append(self.p2)
+
         # Create Computer Snakes
         # In learn mode, we might want MORE snakes to speed up training?
         count = 50 if self.mode == 'learn' else 45 # More snakes in learn mode
@@ -564,6 +587,9 @@ class GAME():
                 self.screen.blit(surf, (25, y_offset))
                 y_offset += 15
 
+            # 4. Draw Minimap
+            self.drawMinimap()
+
         if self.state == 'game_over':
             self.drawGameOver()
 
@@ -580,6 +606,74 @@ class GAME():
         self.screen.blit(titleText, titleRect)
         
         # Restart 提示
-        hintText = self.font.render("Press 'R' to Restart", True, WHITE)
         hintRect = hintText.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20))
         self.screen.blit(hintText, hintRect)
+
+    def drawMinimap(self):
+        # Configuration
+        map_size = 200 # Size of the minimap square
+        margin = 20
+        # Position: Bottom Right
+        mm_x = SCREEN_WIDTH - map_size - margin
+        mm_y = SCREEN_HEIGHT - map_size - margin
+        
+        # Scale factor
+        scale_x = map_size / MAP_WIDTH
+        scale_y = map_size / MAP_HEIGHT
+        
+        # 1. Background
+        mm_surf = pygame.Surface((map_size, map_size))
+        mm_surf.fill((20, 20, 30))
+        mm_surf.set_alpha(200) # Semi-transparent
+        
+        # 2. Border
+        pygame.draw.rect(mm_surf, (100, 200, 255), (0, 0, map_size, map_size), 2)
+        
+        # 3. Draw Food (Simple dots)
+        for f in self.food:
+            fx = int(f.x * scale_x)
+            fy = int(f.y * scale_y)
+            # Clip to minimap bounds
+            fx = max(0, min(map_size-1, fx))
+            fy = max(0, min(map_size-1, fy))
+            
+            # Simple color based on type
+            color = f.color
+            pygame.draw.circle(mm_surf, color, (fx, fy), 2)
+            
+        # 4. Draw Snakes
+        for s in self.snakes:
+            # Draw Head
+            hx = int(s.x * scale_x)
+            hy = int(s.y * scale_y)
+            hx = max(0, min(map_size-1, hx))
+            hy = max(0, min(map_size-1, hy))
+            
+            color = s.color
+            # Highlight Player White/Gold
+            if s == self.snakes[0]: # Assuming index 0 is player/target
+                color = (255, 255, 255)
+                radius = 4
+            else:
+                radius = 3
+                
+            pygame.draw.circle(mm_surf, color, (hx, hy), radius)
+            
+            # Draw Body (Simplified as dots or small lines)
+            # Optimization: Only draw every Nth body part to save perf
+            step = max(1, len(s.body) // 10) 
+            for part in s.body[::step]:
+                 bx = int(part.centerx * scale_x)
+                 by = int(part.centery * scale_y)
+                 pygame.draw.circle(mm_surf, s.color, (bx, by), 1)
+
+        # 5. Draw View Rectangle (Camera view)
+        view_w = SCREEN_WIDTH / self.zoom * scale_x
+        view_h = SCREEN_HEIGHT / self.zoom * scale_y
+        view_x = self.cameraX * scale_x
+        view_y = self.cameraY * scale_y
+        
+        pygame.draw.rect(mm_surf, (255, 255, 255), (view_x, view_y, view_w, view_h), 1)
+
+        # Blit to screen
+        self.screen.blit(mm_surf, (mm_x, mm_y))

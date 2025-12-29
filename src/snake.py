@@ -235,6 +235,37 @@ class playerSnake(Snake):
         else:
             self.isBoosting = False
 
+class KeyboardSnake(Snake):
+    def __init__(self, x, y, color, controls):
+        """
+        controls: dict {'left': K_LEFT, 'right': K_RIGHT, 'boost': K_UP}
+        """
+        super().__init__(x, y, color)
+        self.controls = controls
+        self.turn_speed = 7.5 # Same as computer snake
+        self.angle = 0
+        
+    def updateDirection(self):
+        keys = pygame.key.get_pressed()
+        
+        # Turn Left
+        if keys[self.controls['left']]:
+            self.angle -= self.turn_speed
+        
+        # Turn Right
+        if keys[self.controls['right']]:
+            self.angle += self.turn_speed
+            
+        # Boost
+        if keys[self.controls['boost']]:
+            self.isBoosting = True
+        else:
+            self.isBoosting = False
+            
+        # Update vector
+        rad = math.radians(self.angle)
+        self.direction = pygame.Vector2(math.cos(rad), math.sin(rad))
+
 from .mlAgent import config
 
 class ComputerSnake(Snake):
