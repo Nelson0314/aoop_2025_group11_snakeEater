@@ -37,6 +37,14 @@ graph TD
     class H update
 ```
 
+### State Representation & Action Space
+
+The agent perceives the environment through a **12-bit state vector** and chooses from **6 discrete actions**.
+
+<div align="center">
+  <img src="http://www.plantuml.com/plantuml/png/bLHTJzim57tthxXgfQbej3GV584q1AKWeNL8fOCz81xSn6az4ZkpdR5guh_lsd70PNjPggg-vvvxSdnztJDjg39DLHBzn4LD5QrWGqN-hBWnJ411Iys2N2M5p3PALiodDZnda76LbI6jfjaJNREbsPOC5CiC5UiTmXG9QoKRaL_8KYhujk4cpDzsDU-9_UBOVlv9bIfdojCcaqd0oLb1cz9SIM5kA7gtsz1eCdnboGKpsvg1L6OZ2J7SeFcbeORXEsh5D1COS2dW0oo6N-dAfLMJcKOnGloUeHUDu5Byv4gAobQKi6H2IwLxG7MtXZwBYt5-3By9mCCzroXx0WdKHZzQ6Y8sSILbxaiSR6EBNyXgHGsSFrF51DDjJGkwTACGDp3ZjlSetUOHHOIy15xZaT_XFHAnRuCeXYatUgyrwrBzdB5LSUIiojLt949lXXrdI4yyCN9PW7jQylm4nWUH2uT3ztCb5JhDtVgMhpV6hUQii8kNKBOp38FKAyTUsRBX82Y_gp6SoMVnJiFrR2wpDudaVoLyUmUH5qYzmALWrHPk65KmbVdMLONTJ4Ou67DC2oxMU1wAkVhpQppkA3zaHrwdeZNqkX6QI_dKr8wuQ96MP9_FR0kVJc6mZFQn4_XDy9lkmV0KxWJ_qNJpUJrxBS4JG1YBvbmRa0KwSf26XyLu7nQeD1gXpyD7LxAxWNG45nk9WmxdxXXQ-zYIVb4KSPQ5_bi6BEqrWi5ah-CYg8CjZAqNl2RqjUlsYPp3TW3Q9xR8xGufiT1KIjp7nxybqZ2x8tKOPjuatLRnOk5KegE8-FlGXZ5nS-FM2V43uAAK41nlksoFX-18Xb6o4wLXHFo1MgZhp0dUvz9EsHVw2nQ4d36Hu__l7m" alt="State Diagram" width="100%"/>
+</div>
+
 ## Features
 
 *   **Intelligent Adversaries**: Computer snakes trained to hunt food and avoid collisions.
