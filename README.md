@@ -48,26 +48,26 @@ graph TD
     classDef ai fill:#e1d5e7,stroke:#b4a7d6,color:#333;
     classDef action fill:#fff2cc,stroke:#ffd966,color:#333;
 
-    subgraph Sensors [1. Environmental Sensors]
-        Vis[Vision: 3 pts]
-        Food[Food Sensor]
-        Combat[Combat Awareness]
-        CurrDir[Current Direction]
+    subgraph Sensors ["1. Environmental Sensors"]
+        Vis["Vision: 3 pts"]
+        Food["Food Sensor"]
+        Combat["Combat Awareness"]
+        CurrDir["Current Direction"]
     end
 
-    subgraph StateVec [2. State Vector (12 Bits)]
-        S1[Danger (3)]
-        S2[Direction (4)]
-        S3[Food Loc (4)]
-        S4[Combat (1)]
+    subgraph StateVec ["2. State Vector (12 Bits)"]
+        S1["Danger (3)"]
+        S2["Direction (4)"]
+        S3["Food Loc (4)"]
+        S4["Combat (1)"]
     end
 
-    subgraph Intelligence [3. Q-Learning Core]
-        QTable[Q-Table Lookup]
+    subgraph Intelligence ["3. Q-Learning Core"]
+        QTable["Q-Table Lookup"]
     end
 
-    subgraph Act [4. Chosen Action]
-        Actions[Action Space (6)]
+    subgraph Act ["4. Chosen Action"]
+        Actions["Action Space (6)"]
     end
 
     Vis --> S1
