@@ -140,11 +140,13 @@ The project is organized into a modular structure to ensure maintainability and 
 
 ## Class Structure
 
-```mermaid
-classDiagram
-    direction TB
+```plantuml
+@startuml
+    ' Layout settings
+    skinparam classAttributeIconSize 0
+    top to bottom direction
 
-    %% Core Game Loop
+    ' Core Game Loop
     class GAME {
         +init(screen, mode)
         +handleEvent()
@@ -165,7 +167,7 @@ classDiagram
     }
     GAME <|-- StrategyGAME : Inheritance
 
-    %% Entities
+    ' Entities
     class Snake {
         +move()
         +draw()
@@ -187,9 +189,8 @@ classDiagram
     }
     Snake <|-- KeyboardSnake
 
-    %% Strategy Pattern
-    class SnakeStrategy {
-        <<interface>>
+    ' Strategy Pattern
+    interface SnakeStrategy {
         +decide_action(snake, context)
     }
     class RandomStrategy
@@ -201,7 +202,7 @@ classDiagram
     SnakeStrategy <|.. AdvancedAIStrategy : Implements
     ComputerSnake o-- SnakeStrategy : Aggregation (Strategy)
 
-    %% ML Components
+    ' ML Components
     class QLearningAgent {
         +get_q_value(state, action)
         +chooseAction(state)
@@ -211,17 +212,18 @@ classDiagram
     class SimpleQLearningAgent
     QLearningAgent <|-- SimpleQLearningAgent
 
-    %% Helpers
+    ' Helpers
     class SpatialGrid {
         +insert(snake)
         +get_potential_colliders(rect)
     }
     GAME o-- SpatialGrid : Composition
     
-    %% Relationships
+    ' Relationships
     GAME *-- Snake : Manages
     strategy_demo ..> StrategyGAME : Launches
     simple_learn ..> SimpleGAME : Launches
+@enduml
 ```
 
 ## Installation
