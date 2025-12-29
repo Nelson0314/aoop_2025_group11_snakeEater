@@ -21,6 +21,20 @@ class Food:
         # 避免半徑太小
         if radius < 1: radius = 1
         
+        # 繪製發光效果
+        # Glow radius should be larger than food
+        glow_radius = int(radius * 2.0)
+        glow_size = glow_radius * 2
+        glow_surf = pygame.Surface((glow_size, glow_size), pygame.SRCALPHA)
+            
+        # Draw a soft glow using the food's color
+        r, g, b = self.color
+        pygame.draw.circle(glow_surf, (r, g, b, 60), (glow_radius, glow_radius), glow_radius)
+        pygame.draw.circle(glow_surf, (r, g, b, 100), (glow_radius, glow_radius), int(glow_radius * 0.6))
+
+        glow_rect = glow_surf.get_rect(center=(int(screenX), int(screenY)))
+        screen.blit(glow_surf, glow_rect, special_flags=pygame.BLEND_ADD)
+
         pygame.draw.circle(screen, self.color, (int(screenX), int(screenY)), radius)
 
 class SmallFood(Food):
